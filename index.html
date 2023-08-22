@@ -57,7 +57,12 @@
 			let marker = new google.maps.Marker({
 				position: map.getCenter(),
 				map: map,
-				draggable: false
+				draggable: false,
+				icon : {
+					url :'./marker.svg',
+					size: new google.maps.Size(36, 50),
+					scaledSize: new google.maps.Size(36, 50),
+				}
 			});
 
 			google.maps.event.addDomListener(origin, 'input', function () {
@@ -138,6 +143,7 @@
 					currentSearchFieldId.value = place.formatted_address;
 					currentSearchFieldId.setAttribute("data-lat", lat)
 					currentSearchFieldId.setAttribute("data-lng", lng)
+					currentSearchFieldId.setAttribute("disabled", true);
 					// Hide autocomplete results
 					results.style.display = 'none';
 				}
@@ -196,19 +202,6 @@
 
 		// Fetching current location logic
 		function initGeolocation() {
-			// var qs = (function (a) {
-			// 	if (a == "") return {};
-			// 	var b = {};
-			// 	for (var i = 0; i < a.length; ++i) {
-			// 		var p = a[i].split('=', 2);
-			// 		if (p.length == 1)
-			// 			b[p[0]] = "";
-			// 		else
-			// 			b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
-			// 	}
-			// 	return b;
-			// })(window.location.search.substr(1).split('&'));
-
 			let searchTextFieldOrigin = document.getElementById('searchTextFieldOrigin');
 			let searchTextFieldDestination = document.getElementById('searchTextFieldDestination');
 			if (searchTextFieldOrigin.value == "") {
@@ -218,8 +211,12 @@
 			} else {
 				alert('oigin and destination can not your current location')
 			}
+		}
 
-			// console.log(`${qs['currentLat']}, ${qs['currentLng']}`)
+		function emptyField(id) {
+			document.getElementById(id).value = ""
+			document.getElementById(id).removeAttribute("disabled")
+			document.getElementById(id).focus()
 		}
 	</script>
 	<style>
@@ -478,7 +475,7 @@
 									placeholder="Where From?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)"
 									autofocus>
 								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
-									xmlns="http://www.w3.org/2000/svg">
+									xmlns="http://www.w3.org/2000/svg" onclick="emptyField('searchTextFieldOrigin')">
 									<path
 										d="M16 8L8 16M8.00001 8L16 16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
 										stroke="#000000" stroke-width="1.5" stroke-linecap="round"
@@ -496,7 +493,7 @@
 								<input type="text" id="searchTextFieldDestination" class="form-control w-100 place"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
 								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
-									xmlns="http://www.w3.org/2000/svg">
+									xmlns="http://www.w3.org/2000/svg" onclick="emptyField('searchTextFieldDestination')">
 									<path
 										d="M16 8L8 16M8.00001 8L16 16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
 										stroke="#000000" stroke-width="1.5" stroke-linecap="round"
@@ -513,7 +510,7 @@
 								<input type="text" id="destination1" class="form-control w-100 place"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
 								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
-									xmlns="http://www.w3.org/2000/svg">
+									xmlns="http://www.w3.org/2000/svg" onclick="emptyField('destination1')">
 									<path
 										d="M16 8L8 16M8.00001 8L16 16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
 										stroke="#000000" stroke-width="1.5" stroke-linecap="round"
@@ -537,7 +534,7 @@
 								<input type="text" id="destination2" class="form-control w-100 place"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
 								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
-									xmlns="http://www.w3.org/2000/svg">
+									xmlns="http://www.w3.org/2000/svg" onclick="emptyField('destination2')">
 									<path
 										d="M16 8L8 16M8.00001 8L16 16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
 										stroke="#000000" stroke-width="1.5" stroke-linecap="round"
@@ -560,7 +557,7 @@
 								<input type="text" id="destination3" class="form-control w-100 place"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
 								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
-									xmlns="http://www.w3.org/2000/svg">
+									xmlns="http://www.w3.org/2000/svg" onclick="emptyField('destination3')">
 									<path
 										d="M16 8L8 16M8.00001 8L16 16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
 										stroke="#000000" stroke-width="1.5" stroke-linecap="round"
