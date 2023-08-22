@@ -14,7 +14,7 @@
 		var currentSearchFieldId = "";
 
 		var currentSearchFieldIdOnFocus = "";
-		
+
 		function setCurrentSearchFieldIdOnFocus(id) {
 			currentSearchFieldIdOnFocus = id
 		}
@@ -42,7 +42,7 @@
 			var destination2 = document.getElementById('destination2');
 			var destination3 = document.getElementById('destination3');
 
-			results = document.getElementById('results');			
+			results = document.getElementById('results');
 
 			var mapOptions = {
 				zoom: 16,
@@ -134,7 +134,7 @@
 			placesService.getDetails(request, function (place, status) {
 				if (status === google.maps.places.PlacesServiceStatus.OK) {
 					let latlng = place.geometry.location.toJSON();
-					let lat = latlng.lat, lng = latlng.lng;					
+					let lat = latlng.lat, lng = latlng.lng;
 					currentSearchFieldId.value = place.formatted_address;
 					currentSearchFieldId.setAttribute("data-lat", lat)
 					currentSearchFieldId.setAttribute("data-lng", lng)
@@ -277,6 +277,15 @@
 			background: #f1f1f1;
 			font-size: 12px;
 			height: 35px;
+			padding-right: 25px;
+		}
+
+		.dualsearch li {
+			position: relative;
+		}
+
+		.dualsearch {
+			padding-right: 12px !important;
 		}
 
 		.searchico {
@@ -408,8 +417,28 @@
 			z-index: 10;
 		}
 
-		.display-none{
+		.display-none {
 			display: none !important;
+		}
+
+		.cross1 {
+			position: absolute;
+			right: 32px;
+			z-index: 999;
+			cursor: pointer !important;
+		}
+
+		.cross2 {
+			position: absolute;
+			right: -20px;
+			z-index: 999;
+			cursor: pointer !important;
+		}
+		.Proceedbnt {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
 		}
 	</style>
 </head>
@@ -440,17 +469,35 @@
 						</div>
 						<ul class="dualsearch w-100 droppable-area1 m-0 p-0 connected-sortable">
 							<li class="input-group mb-2 headersearch d-flex align-items-center">
+
 								<input type="text" id="searchTextFieldOrigin" class="form-control w-100 place"
-									placeholder="Where From?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)" autofocus>
+									placeholder="Where From?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)"
+									autofocus>
+								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path
+										d="M16 8L8 16M8.00001 8L16 16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+										stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+										stroke-linejoin="round" />
+								</svg>
+
 								<svg class="curserdrug" width="20" height="20" viewBox="0 0 24 24" fill="none"
 									xmlns="http://www.w3.org/2000/svg">
 									<path d="M5 9H19M5 15H19" stroke="#000000" stroke-width="2" stroke-linecap="round"
 										stroke-linejoin="round" />
 								</svg>
+
 							</li>
 							<li class="input-group mb-2 headersearch d-flex align-items-center">
 								<input type="text" id="searchTextFieldDestination" class="form-control w-100 place"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
+								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path
+										d="M16 8L8 16M8.00001 8L16 16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+										stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+										stroke-linejoin="round" />
+								</svg>
 								<svg class="curserdrug" width="20" height="20" viewBox="0 0 24 24" fill="none"
 									xmlns="http://www.w3.org/2000/svg">
 									<path d="M5 9H19M5 15H19" stroke="#000000" stroke-width="2" stroke-linecap="round"
@@ -461,30 +508,70 @@
 							<li class="input-group mb-2 headersearch d-flex align-items-center li1 display-none">
 								<input type="text" id="destination1" class="form-control w-100 place"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
+								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path
+										d="M16 8L8 16M8.00001 8L16 16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+										stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+										stroke-linejoin="round" />
+								</svg>
 								<svg class="curserdrug" width="20" height="20" viewBox="0 0 24 24" fill="none"
 									xmlns="http://www.w3.org/2000/svg">
 									<path d="M5 9H19M5 15H19" stroke="#000000" stroke-width="2" stroke-linecap="round"
 										stroke-linejoin="round" />
+								</svg>
+
+								<svg class="cross2" width="20" height="20" viewBox="0 0 24 24" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path
+										d="M6.99486 7.00636C6.60433 7.39689 6.60433 8.03005 6.99486 8.42058L10.58 12.0057L6.99486 15.5909C6.60433 15.9814 6.60433 16.6146 6.99486 17.0051C7.38538 17.3956 8.01855 17.3956 8.40907 17.0051L11.9942 13.4199L15.5794 17.0051C15.9699 17.3956 16.6031 17.3956 16.9936 17.0051C17.3841 16.6146 17.3841 15.9814 16.9936 15.5909L13.4084 12.0057L16.9936 8.42059C17.3841 8.03007 17.3841 7.3969 16.9936 7.00638C16.603 6.61585 15.9699 6.61585 15.5794 7.00638L11.9942 10.5915L8.40907 7.00636C8.01855 6.61584 7.38538 6.61584 6.99486 7.00636Z"
+										fill="#0F0F0F" />
 								</svg>
 							</li>
 
 							<li class="input-group mb-2 headersearch d-flex align-items-center li2 display-none">
 								<input type="text" id="destination2" class="form-control w-100 place"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
+								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path
+										d="M16 8L8 16M8.00001 8L16 16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+										stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+										stroke-linejoin="round" />
+								</svg>
 								<svg class="curserdrug" width="20" height="20" viewBox="0 0 24 24" fill="none"
 									xmlns="http://www.w3.org/2000/svg">
 									<path d="M5 9H19M5 15H19" stroke="#000000" stroke-width="2" stroke-linecap="round"
 										stroke-linejoin="round" />
+								</svg>
+								<svg class="cross2" width="20" height="20" viewBox="0 0 24 24" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path
+										d="M6.99486 7.00636C6.60433 7.39689 6.60433 8.03005 6.99486 8.42058L10.58 12.0057L6.99486 15.5909C6.60433 15.9814 6.60433 16.6146 6.99486 17.0051C7.38538 17.3956 8.01855 17.3956 8.40907 17.0051L11.9942 13.4199L15.5794 17.0051C15.9699 17.3956 16.6031 17.3956 16.9936 17.0051C17.3841 16.6146 17.3841 15.9814 16.9936 15.5909L13.4084 12.0057L16.9936 8.42059C17.3841 8.03007 17.3841 7.3969 16.9936 7.00638C16.603 6.61585 15.9699 6.61585 15.5794 7.00638L11.9942 10.5915L8.40907 7.00636C8.01855 6.61584 7.38538 6.61584 6.99486 7.00636Z"
+										fill="#0F0F0F" />
 								</svg>
 							</li>
 
 							<li class="input-group mb-2 headersearch d-flex align-items-center li3 display-none">
 								<input type="text" id="destination3" class="form-control w-100 place"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
+								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path
+										d="M16 8L8 16M8.00001 8L16 16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+										stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+										stroke-linejoin="round" />
+								</svg>
 								<svg class="curserdrug" width="20" height="20" viewBox="0 0 24 24" fill="none"
 									xmlns="http://www.w3.org/2000/svg">
 									<path d="M5 9H19M5 15H19" stroke="#000000" stroke-width="2" stroke-linecap="round"
 										stroke-linejoin="round" />
+								</svg>
+								<svg class="cross2" width="20" height="20" viewBox="0 0 24 24" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path
+										d="M6.99486 7.00636C6.60433 7.39689 6.60433 8.03005 6.99486 8.42058L10.58 12.0057L6.99486 15.5909C6.60433 15.9814 6.60433 16.6146 6.99486 17.0051C7.38538 17.3956 8.01855 17.3956 8.40907 17.0051L11.9942 13.4199L15.5794 17.0051C15.9699 17.3956 16.6031 17.3956 16.9936 17.0051C17.3841 16.6146 17.3841 15.9814 16.9936 15.5909L13.4084 12.0057L16.9936 8.42059C17.3841 8.03007 17.3841 7.3969 16.9936 7.00638C16.603 6.61585 15.9699 6.61585 15.5794 7.00638L11.9942 10.5915L8.40907 7.00636C8.01855 6.61584 7.38538 6.61584 6.99486 7.00636Z"
+										fill="#0F0F0F" />
 								</svg>
 							</li>
 						</ul>
@@ -523,7 +610,7 @@
 										stroke-linejoin="round" />
 								</svg>
 							</button>
-						</li>						
+						</li>
 					</ul>
 				</section>
 			</header>
@@ -533,7 +620,8 @@
 						aria-labelledby="pills-home-tab">
 						<div class="py-2 border-bottom d-flex gap-2 align-items-center">
 							<span>
-								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
 									<path fill-rule="evenodd" clip-rule="evenodd"
 										d="M12 16.5017C14.4853 16.5017 16.5 14.487 16.5 12.0017C16.5 9.5164 14.4853 7.50168 12 7.50168C9.51472 7.50168 7.5 9.5164 7.5 12.0017C7.5 14.487 9.51472 16.5017 12 16.5017ZM12 14.5034C10.6184 14.5034 9.49832 13.3833 9.49832 12.0017C9.49832 10.62 10.6184 9.5 12 9.5C13.3816 9.5 14.5017 10.62 14.5017 12.0017C14.5017 13.3833 13.3816 14.5034 12 14.5034Z"
 										fill="#0F0F0F" />
@@ -550,9 +638,9 @@
 						<div class="searchgroup pac-container" id="results">
 
 						</div>
-						
+
 						<div class="py-2 border-bottom d-flex gap-2 align-items-center">
-							<span>						
+							<span>
 								<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="16" height="16"
 									style="shape-rendering:geometricPrecision;text-rendering:geometricPrecision;image-rendering:optimizeQuality;fill-rule:evenodd;clip-rule:evenodd"
 									viewBox="0 0 6.827 6.827">
@@ -604,10 +692,10 @@
 									<h5 class="m-0">WORK</h5>
 									<small class="d-block">Location</small>
 								</div>
-							</div>							
+							</div>
 						</div>
 					</div>
-				</div>				
+				</div>
 			</div>
 		</div>
 
@@ -626,12 +714,18 @@
 			<div class="p-3 bottomstky">
 				<h4>Choose your <span class="typeOfAddress"></span> spot</h4>
 				<div class="mb-3"><span id="onMapAddressText"></span></div>
-				<button class="btn btn-dark w-100 mb-2 btn-confirm-address">Confirm <span class="typeOfAddress"></span></button>
+				<button class="btn btn-dark w-100 mb-2 btn-confirm-address">Confirm <span
+						class="typeOfAddress"></span></button>
 				<button class="btn btn-light w-100 mb-2 btn-back">Cancel</button>
 			</div>
 		</div>
 
 	</div>
+
+   <div class="Proceedbnt mt-auto p-3">
+	
+	<button class="btn btn-dark w-100 mb-2 btn-confirm-address">Proceed</button>
+   </div>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
@@ -640,12 +734,12 @@
 	<script>
 		const addButton = document.getElementById("addMoreButton");
 
-		addButton.addEventListener("click", () => {			
-			if($('.li1').css('display') == 'none'){
+		addButton.addEventListener("click", () => {
+			if ($('.li1').css('display') == 'none') {
 				$('.li1').removeClass('display-none')
-			}else if($('.li2').css('display') == 'none'){
+			} else if ($('.li2').css('display') == 'none') {
 				$('.li2').removeClass('display-none')
-			}else if($('.li3').css('display') == 'none'){
+			} else if ($('.li3').css('display') == 'none') {
 				$('.li3').removeClass('display-none')
 			}
 		});
@@ -657,7 +751,7 @@
 				stack: '.connected-sortable ul'
 			}).
 				disableSelection();
-		}		
+		}
 
 		$(".mapsecclk").click(function () {
 			let text = ""
@@ -680,9 +774,9 @@
 		});
 
 		$(".btn-confirm-address").click(function () {
-			$('#'+currentSearchFieldIdOnFocus).val($('#onMapAddressText').text())	
+			$('#' + currentSearchFieldIdOnFocus).val($('#onMapAddressText').text())
 			$(".screen1").css("display", "block");
-			$("#mapsec").css("display", "none");		
+			$("#mapsec").css("display", "none");
 		})
 	</script>
 
