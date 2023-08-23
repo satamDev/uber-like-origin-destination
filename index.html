@@ -3,14 +3,15 @@
 
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<title>Hello, world!</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
 		crossorigin="anonymous">
 	<script type="text/javascript"
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&libraries=places"></script>
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-Aqxhu4qpY2Cr_9rbLslFi4sdIsUdLxk&libraries=places"></script>
+		<!-- AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg -->
 	<script>
-		var autocompleteService, placesService, results, map;
+		var autocompleteService, placesService, results, map, geocoder;
 		var currentSearchFieldId = "";
 
 		var currentSearchFieldIdOnFocus = "";
@@ -32,8 +33,9 @@
 			return b;
 		})(window.location.search.substr(1).split('&'));
 
-		var currentLat = (typeof qs['currentLat'] == 'undefined') ? 22.648274656882812 : qs['currentLat'], 
-		currentLng = (typeof qs['currentLat'] == 'undefined') ? 88.34167186704343 : qs['currentLng'];
+		var currentLat = (typeof qs['currentLat'] == 'undefined') ? null : qs['currentLat'], 
+		currentLng = (typeof qs['currentLat'] == 'undefined') ? null : qs['currentLng'],
+		userId = qs['userId'];
 
 		function initialize() {
 			var origin = document.getElementById('searchTextFieldOrigin');
@@ -44,7 +46,10 @@
 			var destination3 = document.getElementById('destination3');
 
 			results = document.getElementById('results');
-
+			if(currentLat == null){
+				currentLat = 22.581013137375813
+				currentLng = 88.37488662696201
+			}
 			var mapOptions = {
 				zoom: 16,
 				center: new google.maps.LatLng(currentLat, currentLng),
@@ -100,7 +105,20 @@
 				marker.setPosition(map.getCenter());
 			});
 
-			var geocoder = new google.maps.Geocoder();
+			geocoder = new google.maps.Geocoder();
+
+			geocoder.geocode({
+				'latLng': new google.maps.LatLng(currentLat, currentLng)
+				}, function (results, status) {
+				if (status == google.maps.GeocoderStatus.OK) {
+					if (results[0]) {
+						document.getElementById('searchTextFieldOrigin').setAttribute("disabled", true);
+						document.getElementById('searchTextFieldOrigin').value = results[0].formatted_address
+						document.getElementById('searchTextFieldOrigin').setAttribute("data-lat", currentLat)
+						document.getElementById('searchTextFieldOrigin').setAttribute("data-lng", currentLng)
+					}
+				}
+			});
 
 			google.maps.event.addListener(map, 'dragend', function () {
 				let latlng = marker.getPosition().toJSON();
@@ -113,6 +131,8 @@
 						if (results[0]) {
 							address = results[0].formatted_address;
 							document.getElementById('onMapAddressText').innerHTML = address
+							document.getElementById('onMapAddressTextLat').value = latlng.lat
+							document.getElementById('onMapAddressTextLng').value = latlng.lng
 						}
 					}
 				});
@@ -123,7 +143,14 @@
 		}
 
 		function getPlacePredictions(search) {
+			const location = new google.maps.LatLng(currentLat, currentLng );
+			var radius = 15000;
+			var circle = new google.maps.Circle({
+				center: location,
+				radius: radius
+			});
 			autocompleteService.getPlacePredictions({
+				bounds: circle.getBounds(),
 				input: search,
 				componentRestrictions: { country: "ind" },
 				fields: ["address_components", "geometry", "icon", "name"],
@@ -149,6 +176,13 @@
 					results.style.display = 'none';
 				}
 			});
+		}
+
+		function setLocationFromSavedPlace(lat, lng, text) {
+			document.getElementById(currentSearchFieldIdOnFocus).value = text
+			document.getElementById(currentSearchFieldIdOnFocus).setAttribute("data-lat", lat)
+			document.getElementById(currentSearchFieldIdOnFocus).setAttribute("data-lng", lng)
+			document.getElementById(currentSearchFieldIdOnFocus).setAttribute("disabled", true)
 		}
 
 		// Place search callback
@@ -180,8 +214,7 @@
 							</svg>
 						</span>
 						<div class="">
-							<h5 class="m-0 search-result" data-placeid="${prediction.place_id}" data-name="${prediction.terms[0].value}">${prediction.description}</h5>
-							<small class="d-block">Location</small>
+							<h5 class="m-0 search-result" data-placeid="${prediction.place_id}" data-name="${prediction.terms[0].value}">${prediction.description}</h5>							
 						</div>
 					</div>`
 				}
@@ -202,16 +235,19 @@
 		google.maps.event.addDomListener(window, 'load', initialize);
 
 		// Fetching current location logic
-		function initGeolocation() {
-			let searchTextFieldOrigin = document.getElementById('searchTextFieldOrigin');
-			let searchTextFieldDestination = document.getElementById('searchTextFieldDestination');
-			if (searchTextFieldOrigin.value == "") {
-				searchTextFieldOrigin.value = 'Current Location';
-			} else if (searchTextFieldDestination.value == "" && searchTextFieldOrigin.value != "" && searchTextFieldOrigin.value != 'Current Location') {
-				searchTextFieldDestination.value = 'Current Location'
-			} else {
-				alert('oigin and destination can not your current location')
-			}
+		function initGeolocation() {	
+			geocoder.geocode({
+				'latLng': new google.maps.LatLng(currentLat, currentLng)
+				}, function (results, status) {
+				if (status == google.maps.GeocoderStatus.OK) {
+					if (results[0]) {
+						document.getElementById(currentSearchFieldIdOnFocus).setAttribute("disabled", true);
+						document.getElementById(currentSearchFieldIdOnFocus).value = results[0].formatted_address
+						document.getElementById(currentSearchFieldIdOnFocus).setAttribute("data-lat", currentLat)
+						document.getElementById(currentSearchFieldIdOnFocus).setAttribute("data-lng", currentLng)
+					}
+				}
+			});
 		}
 
 		function emptyField(id) {
@@ -345,11 +381,11 @@
 			background: #222;
 		}
 
-		.searchgroup h5 {
+		/* .searchgroup h5 {
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-		}
+		} */
 
 		.cursor-pointer {
 			cursor: pointer;
@@ -390,7 +426,7 @@
 		}
 
 		.bottomstky {
-			position: fixed;
+			position: absolute;
 			bottom: 0;
 			left: 0;
 			width: 100%;
@@ -434,13 +470,23 @@
 		}
 
 		.Proceedbnt {
-			position: absolute;
+			position: fixed;
 			bottom: 0;
 			left: 0;
 			width: 100%;
+			background-color: #fff;
 		}
 		.overflow-hidden {
 			overflow: hidden;
+		}
+		.searchgroup.pac-container {
+			width: 100%;
+			overflow: auto;
+			height: 100%;
+		}
+		.screen1  .tab-content {
+			min-height:58vh;
+			overflow: auto;
 		}
 	</style>
 </head>
@@ -474,7 +520,7 @@
 
 								<input type="text" id="searchTextFieldOrigin" class="form-control w-100 place"
 									placeholder="Where From?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)"
-									autofocus>
+									>
 								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
 									xmlns="http://www.w3.org/2000/svg" onclick="emptyField('searchTextFieldOrigin')">
 									<path
@@ -490,9 +536,10 @@
 								</svg>
 
 							</li>
+
 							<li class="input-group mb-2 headersearch d-flex align-items-center">
 								<input type="text" id="searchTextFieldDestination" class="form-control w-100 place"
-									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
+									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)" autofocus>
 								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
 									xmlns="http://www.w3.org/2000/svg" onclick="emptyField('searchTextFieldDestination')">
 									<path
@@ -508,7 +555,7 @@
 							</li>
 
 							<li class="input-group mb-2 headersearch d-flex align-items-center li1 display-none">
-								<input type="text" id="destination1" class="form-control w-100 place"
+								<input type="text" id="destination1" class="form-control w-100"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
 								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
 									xmlns="http://www.w3.org/2000/svg" onclick="emptyField('destination1')">
@@ -532,7 +579,7 @@
 							</li>
 
 							<li class="input-group mb-2 headersearch d-flex align-items-center li2 display-none">
-								<input type="text" id="destination2" class="form-control w-100 place"
+								<input type="text" id="destination2" class="form-control w-100"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
 								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
 									xmlns="http://www.w3.org/2000/svg" onclick="emptyField('destination2')">
@@ -555,7 +602,7 @@
 							</li>
 
 							<li class="input-group mb-2 headersearch d-flex align-items-center li3 display-none">
-								<input type="text" id="destination3" class="form-control w-100 place"
+								<input type="text" id="destination3" class="form-control w-100"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
 								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
 									xmlns="http://www.w3.org/2000/svg" onclick="emptyField('destination3')">
@@ -637,10 +684,6 @@
 							</div>
 						</div>
 
-						<div class="searchgroup pac-container" id="results">
-
-						</div>
-
 						<div class="py-2 border-bottom d-flex gap-2 align-items-center">
 							<span>
 								<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="16" height="16"
@@ -675,33 +718,24 @@
 								<h5 class="m-0 cursor-pointer mapsecclk">Set Location On Map</h5>
 							</div>
 						</div>
+
+						<div class="searchgroup pac-container" id="results">
+
+						</div>
+
+						
 					</div>
 
 					<div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-						<div class="searchgroup">
-							<div class="py-2 border-bottom d-flex gap-2">
-								<span>
-									<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-										xmlns="http://www.w3.org/2000/svg">
-										<circle cx="12" cy="12" r="9" stroke="#000000" stroke-linecap="round"
-											stroke-linejoin="round" stroke-width="2" />
-										<path d="M12 7V10.7639C12 11.5215 12.428 12.214 13.1056 12.5528L16 14"
-											stroke="#F39C04" stroke-linecap="round" stroke-linejoin="round"
-											stroke-width="2" />
-									</svg>
-								</span>
-								<div class="">
-									<h5 class="m-0">WORK</h5>
-									<small class="d-block">Location</small>
-								</div>
-							</div>
+						<div class="searchgroup saved-places">
+							
 						</div>
 					</div>
 				</div>
 			</div>
 
 			<div class="Proceedbnt mt-auto p-3">
-				<button class="btn btn-dark w-100 mb-2 btn-confirm-address">Proceed</button>
+				<button class="btn btn-dark w-100 mb-2 btn-proceed-address">Proceed</button>
 			</div>
 		</div>
 
@@ -716,7 +750,7 @@
 				</svg>
 			</button>
 			
-			<div class="overflow-hidden"><div id="map-canvas"></div></div>
+			<div class="overflow-hidden"><div id="map-canvas" style="width: 100vw; height: 100vh; position: absolute!important;"></div></div>
 
 			<div class="p-3 bottomstky">
 				<h4>Choose your <span class="typeOfAddress"></span> spot</h4>
@@ -729,22 +763,32 @@
 
 	</div>
 
-
+	<input type="hidden" id="onMapAddressTextLat">
+	<input type="hidden" id="onMapAddressTextLng">
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
 	<script>
+		// if(currentLat != null){
+		// 	document.getElementById('searchTextFieldOrigin').setAttribute("data-lat", currentLat);
+		// 	document.getElementById('searchTextFieldOrigin').setAttribute("data-lng", currentLng);
+		// 	document.getElementById('searchTextFieldOrigin').value = 'Current Location';
+		// }
+
 		const addButton = document.getElementById("addMoreButton");
 
 		addButton.addEventListener("click", () => {
 			if ($('.li1').css('display') == 'none') {
 				$('.li1').removeClass('display-none')
+				$('#destination1').addClass('place')
 			} else if ($('.li2').css('display') == 'none') {
 				$('.li2').removeClass('display-none')
+				$('#destination2').addClass('place')
 			} else if ($('.li3').css('display') == 'none') {
 				$('.li3').removeClass('display-none')
+				$('#destination3').addClass('place')
 			}
 		});
 
@@ -779,14 +823,80 @@
 
 		$(".btn-confirm-address").click(function () {
 			$('#' + currentSearchFieldIdOnFocus).val($('#onMapAddressText').text())
+			
+			$('#' + currentSearchFieldIdOnFocus).attr('disabled', true)
+			$('#' + currentSearchFieldIdOnFocus).attr('data-lat', $('#onMapAddressTextLat').val())
+			$('#' + currentSearchFieldIdOnFocus).attr('data-lng', $('#onMapAddressTextLng').val())
+
 			$(".screen1").css("display", "block");
 			$("#mapsec").css("display", "none");
 		})
 
 		function deleteLocation(inputFieldId, parentDivClass){
 			$('#'+inputFieldId).val('')
+			$('#'+inputFieldId).removeClass('place')
 			$('.'+parentDivClass).addClass('display-none')
 		}
+
+		$(".btn-proceed-address").click(()=>{
+			let locations = [];
+			$.each($(".place"), (index, value) => {
+				if(typeof $("#"+value.id).data('lat') != 'undefined'){
+					locations.push({
+						lat : $("#"+value.id).data('lat'),
+						lng : $("#"+value.id).data('lng'),
+						text : $("#"+value.id).val()
+					})
+				}
+			})
+			if(locations.length < 2){
+				console.log(`you have to put at least 2 location`);
+			}else{
+				console.log(locations);
+				if (messageHandler) {
+                    messageHandler.postMessage(locations);
+                }
+			}
+		})
+
+		$(document).ready(function () {            
+			$.ajax({
+				url: `https://api.jaduride.com/customers/users/${userId}/places/saved`,
+				type: "get",
+				headers: {
+					"x-api-key": "4c174057-0a6b-4fe8-98df-5699fac7c51a",
+					"platform" : "web",
+					"deviceid" : ""
+				},
+				success: function (result) {
+					console.log(result);
+					if(result.status){
+						let html = ""
+						$.each(result.savedPlaces, (index, element) => {
+							html += `<div class="py-2 border-bottom d-flex gap-2 cursor-pointer">
+								<span>
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+										xmlns="http://www.w3.org/2000/svg">
+										<circle cx="12" cy="12" r="9" stroke="#000000" stroke-linecap="round"
+											stroke-linejoin="round" stroke-width="2" />
+										<path d="M12 7V10.7639C12 11.5215 12.428 12.214 13.1056 12.5528L16 14"
+											stroke="#F39C04" stroke-linecap="round" stroke-linejoin="round"
+											stroke-width="2" />
+									</svg>
+								</span>
+								<div class="">
+									<h5 class="m-0" onclick="setLocationFromSavedPlace('${element.lat}', '${element.lat}', '${element.description}')">${element.description}</h5>									
+								</div>
+							</div>`
+						})
+						$(".saved-places").html(html)
+					}
+				},
+				error: function (xhr, status, error) {
+					console.log(error);
+				}
+			});
+        });
 	</script>
 
 </body>
