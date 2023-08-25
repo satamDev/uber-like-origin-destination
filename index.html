@@ -42,13 +42,34 @@
 		currentLng = (typeof qs['currentLat'] == 'undefined') ? null : qs['currentLng'],
 		userId = qs['userId'];
 
-		function initialize() {
-			var origin = document.getElementById('searchTextFieldOrigin');
-			var destination = document.getElementById('searchTextFieldDestination');
+		var incommingData = (typeof qs['existingLocations'] == 'undefined' || qs['existingLocations'] === 'null') ? {} : JSON.parse(qs['existingLocations']);
+		// incommingData = {
+		// 	destination:{ 
+		// 		lat:22.5830002,
+		// 		lng:88.3372909,
+		// 		text:"Howrah Railway Station, Howrah, West Bengal, India"
+		// 	},
+		// 	origin : {
+		// 		lat : 22.581013137375813,
+		// 		lng : 88.37488662696201,
+		// 		text : "6/1A, Yogi Para, Garpar, Machuabazar, Kolkata, West Bengal 700009, India"
+		// 	},
+		// 	waypoints : [
+		// 		{
+		// 			lat: 22.572646, 
+		// 			lng: 88.36389500000001, 
+		// 			text: 'Kolkata, West Bengal, India'
+		// 		}
+		// 	]
+		// }		
 
-			var destination1 = document.getElementById('destination1');
-			var destination2 = document.getElementById('destination2');
-			var destination3 = document.getElementById('destination3');
+		function initialize() {
+			let origin = document.getElementById('searchTextFieldOrigin');
+			let destination = document.getElementById('searchTextFieldDestination');
+
+			let destination1 = document.getElementById('destination1');
+			let destination2 = document.getElementById('destination2');
+			let destination3 = document.getElementById('destination3');
 
 			results = document.getElementById('results');
 			if(currentLat == null){
@@ -112,18 +133,21 @@
 
 			geocoder = new google.maps.Geocoder();
 
-			geocoder.geocode({
-				'latLng': new google.maps.LatLng(currentLat, currentLng)
-				}, function (results, status) {
-				if (status == google.maps.GeocoderStatus.OK) {
-					if (results[0]) {
-						document.getElementById('searchTextFieldOrigin').setAttribute("disabled", true);
-						document.getElementById('searchTextFieldOrigin').value = results[0].formatted_address
-						document.getElementById('searchTextFieldOrigin').setAttribute("data-lat", currentLat)
-						document.getElementById('searchTextFieldOrigin').setAttribute("data-lng", currentLng)
+			if(typeof incommingData != 'undefined' && Object.keys(incommingData).length > 1){}
+			else{
+				geocoder.geocode({
+					'latLng': new google.maps.LatLng(currentLat, currentLng)
+					}, function (results, status) {
+					if (status == google.maps.GeocoderStatus.OK) {
+						if (results[0]) {
+							document.getElementById('searchTextFieldOrigin').setAttribute("disabled", true);
+							document.getElementById('searchTextFieldOrigin').value = results[0].formatted_address
+							document.getElementById('searchTextFieldOrigin').setAttribute("data-lat", currentLat)
+							document.getElementById('searchTextFieldOrigin').setAttribute("data-lng", currentLng)
+						}
 					}
-				}
-			});
+				});
+			}
 
 			google.maps.event.addListener(map, 'dragend', function () {
 				let latlng = marker.getPosition().toJSON();
@@ -179,6 +203,7 @@
 					currentSearchFieldId.setAttribute("disabled", true);
 					// Hide autocomplete results
 					results.style.display = 'none';
+					checkMoreThanTwoPlaces()					
 				}
 			});
 		}
@@ -261,12 +286,7 @@
 				}
 			});
 		}
-
-		function emptyField(id) {
-			document.getElementById(id).value = ""
-			document.getElementById(id).removeAttribute("disabled")
-			document.getElementById(id).focus()
-		}
+		
 	</script>
 	<style>
 		.container {
@@ -733,7 +753,7 @@
 			</div>
 
 			<div class="Proceedbnt mt-auto p-3">
-				<button class="btn btn-dark w-100 mb-2 btn-proceed-address">Proceed</button>
+				<button class="btn btn-dark w-100 mb-2 btn-proceed-address" disabled>Proceed</button>
 			</div>
 		</div>
 
@@ -780,6 +800,21 @@
 		</div>
 	</div>
 
+	<div class="modal fade" id="locationErrorModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="locationErrorModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-sm modal-dialog-centered rounded-0">
+		<div class="modal-content">
+			<div class="modal-body text-center">
+				<div class="mb-2 mx-auto"><svg width="40" height="40" viewBox="0 0 1024 1024" class="icon"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M905.92 237.76a32 32 0 0 0-52.48 36.48A416 416 0 1 1 96 512a418.56 418.56 0 0 1 297.28-398.72 32 32 0 1 0-18.24-61.44A480 480 0 1 0 992 512a477.12 477.12 0 0 0-86.08-274.24z" fill="#df1313" /><path d="M630.72 113.28A413.76 413.76 0 0 1 768 185.28a32 32 0 0 0 39.68-50.24 476.8 476.8 0 0 0-160-83.2 32 32 0 0 0-18.24 61.44zM489.28 86.72a36.8 36.8 0 0 0 10.56 6.72 30.08 30.08 0 0 0 24.32 0 37.12 37.12 0 0 0 10.56-6.72A32 32 0 0 0 544 64a33.6 33.6 0 0 0-9.28-22.72A32 32 0 0 0 505.6 32a20.8 20.8 0 0 0-5.76 1.92 23.68 23.68 0 0 0-5.76 2.88l-4.8 3.84a32 32 0 0 0-6.72 10.56A32 32 0 0 0 480 64a32 32 0 0 0 2.56 12.16 37.12 37.12 0 0 0 6.72 10.56zM726.72 297.28a32 32 0 0 0-45.12 0l-169.6 169.6-169.28-169.6A32 32 0 0 0 297.6 342.4l169.28 169.6-169.6 169.28a32 32 0 1 0 45.12 45.12l169.6-169.28 169.28 169.28a32 32 0 0 0 45.12-45.12L557.12 512l169.28-169.28a32 32 0 0 0 0.32-45.44z" fill="#df1313" /></svg></div>
+				<h5 class="mb-2 h5" >Error</h5>
+				<div>You have to put at least 2 location</div>
+			</div>
+			<div class="modal-footer justify-content-center">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ok</button>
+			</div>
+		</div>
+		</div>
+	</div>
+
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -800,6 +835,53 @@
 			}
 		});
 
+		function prefillData(){
+			if(typeof incommingData != 'undefined' && Object.keys(incommingData).length > 1){
+				let origin = document.getElementById('searchTextFieldOrigin');
+				let destination = document.getElementById('searchTextFieldDestination');
+
+				let destination1 = document.getElementById('destination1');
+				let destination2 = document.getElementById('destination2');
+				let destination3 = document.getElementById('destination3');
+
+				origin.value = incommingData.origin.text;
+				origin.setAttribute("data-lat", incommingData.origin.lat)
+				origin.setAttribute("data-lng", incommingData.origin.lng)
+				origin.setAttribute("disabled", true);
+
+				destination.value = incommingData.destination.text;
+				destination.setAttribute("data-lat", incommingData.destination.lat)
+				destination.setAttribute("data-lng", incommingData.destination.lng)
+				destination.setAttribute("disabled", true);
+				
+				for (let index = 0; index < incommingData.waypoints.length; index++) {
+					if(index == 0){					
+						destination1.value = incommingData.waypoints[index].text;
+						destination1.setAttribute("data-lat", incommingData.waypoints[index].lat)
+						destination1.setAttribute("data-lng", incommingData.waypoints[index].lng)
+						destination1.setAttribute("disabled", true);	
+						destination1.classList.add("place")			
+						$('.li1').removeClass('display-none')
+					}else if(index == 1){					
+						destination2.value = incommingData.waypoints[index].text;
+						destination2.setAttribute("data-lat", incommingData.waypoints[index].lat)
+						destination2.setAttribute("data-lng", incommingData.waypoints[index].lng)
+						destination2.setAttribute("disabled", true);	
+						destination2.classList.add("place")			
+						$('.li2').removeClass('display-none')
+					}else if(index == 2){					
+						destination3.value = incommingData.waypoints[index].text;
+						destination3.setAttribute("data-lat", incommingData.waypoints[index].lat)
+						destination3.setAttribute("data-lng", incommingData.waypoints[index].lng)
+						destination3.setAttribute("disabled", true);	
+						destination3.classList.add("place")			
+						$('.li3').removeClass('display-none')
+					}
+				}
+				$('.btn-proceed-address').removeAttr('disabled')
+			}
+		}
+
 		$(".mapsecclk").click(function () {
 			let text = ""
 
@@ -815,6 +897,7 @@
 			$(".screen1").css("display", "none");
 			$("#mapsec").css("display", "block");
 		});
+		
 		$(".btn-back").click(function () {
 			$(".screen1").css("display", "block");
 			$("#mapsec").css("display", "none");
@@ -835,25 +918,54 @@
 			$('#'+inputFieldId).val('')
 			$('#'+inputFieldId).removeClass('place')
 			$('.'+parentDivClass).addClass('display-none')
+			checkMoreThanTwoPlaces()
+		}
+
+		function emptyField(id) {
+			document.getElementById(id).value = ""
+			document.getElementById(id).removeAttribute("disabled")
+			$('#'+id).removeClass('place')
+			document.getElementById(id).focus()
+			checkMoreThanTwoPlaces()
 		}
 
 		$(".btn-proceed-address").click(()=>{
-			let locations = [];
+			let locations = {};
+			let i = 0;
+			let waypoints = []
 			$.each($(".place"), (index, value) => {
 				if(typeof $("#"+value.id).data('lat') != 'undefined'){
-					locations.push({
-						lat : $("#"+value.id).data('lat'),
-						lng : $("#"+value.id).data('lng'),
-						text : $("#"+value.id).val()
-					})
+					if(i==0){
+						locations['origin'] = {
+								lat : $("#"+value.id).data('lat'),
+								lng : $("#"+value.id).data('lng'),
+								text : $("#"+value.id).val()
+							}						
+					}else if(i==1){
+						locations['destination'] = {
+								lat : $("#"+value.id).data('lat'),
+								lng : $("#"+value.id).data('lng'),
+								text : $("#"+value.id).val()
+							}						
+					}else{
+						waypoints.push({
+							lat : $("#"+value.id).data('lat'),
+							lng : $("#"+value.id).data('lng'),
+							text : $("#"+value.id).val()
+						})
+					}					
+					i++;
 				}
 			})
-			if(locations.length < 2){
-				console.log(`you have to put at least 2 location`);
-			}else{
-				console.log(locations);
+			locations['waypoints'] = waypoints
+			// console.log(locations);		
+			// console.log(Object.keys(locations).length);	
+			if( Object.keys(locations).length < 3){
+				// console.log(`you have to put at least 2 location`);
+				$('#locationErrorModel').modal('show');
+			}else{				
 				if (messageHandler) {
-                    messageHandler.postMessage(locations);
+                    messageHandler.postMessage(JSON.stringify(locations));
                 }
 			}
 		})
@@ -889,7 +1001,6 @@
 					"deviceid" : ""
 				},
 				success: function (result) {
-					console.log(result);
 					if(result.status){
 						let html = ""
 						$.each(result.savedPlaces, (index, element) => {
@@ -923,6 +1034,14 @@
 					console.log(error);
 				}
 			});
+		}
+
+		const checkMoreThanTwoPlaces = () =>{
+			if( $('.place').length > 1){
+				$('.btn-proceed-address').removeAttr('disabled')
+			}else{
+				$('.btn-proceed-address').addAttr('disabled')
+			}
 		}
 
 		const setSavedPlaces = (placeId, text) => {
@@ -966,6 +1085,7 @@
 
 		$(document).ready(function () {            
 			getSavedPlaces()
+			prefillData()
         });
 	</script>
 </body>
