@@ -241,7 +241,7 @@
 			for (var i = 0, prediction; prediction = predictions[i]; i++) {
 				for (var i = 0, prediction; prediction = predictions[i]; i++) {
 					results.innerHTML += `<div class="d-flex align-items-center border-bottom justify-content-between">
-						<div class="py-2 d-flex gap-2 cursor-pointer">
+						<div class="py-3 d-flex gap-2 cursor-pointer">
 							<span>
 								<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
 									xmlns="http://www.w3.org/2000/svg">
@@ -349,8 +349,9 @@
 			box-shadow: none !important;
 			outline: none !important;
 			background: #f1f1f1;
-			font-size: 12px;
-			height: 35px;
+			font-size: 16px;
+			height: 50px;
+			font-weight:500;
 			padding-right: 25px;
 		}
 
@@ -381,11 +382,14 @@
 		}
 
 		h5 {
-			font-size: 12px;
+			font-size: 16px;
+			font-weight: 500;
+			line-height: 1.4;
 		}
 
 		h4 {
-			font-size: 16px;
+			font-size: 20px;
+			font-weight:600;
 		}
 
 		.markprogres {
@@ -499,18 +503,29 @@
 
 		.cross1 {
 			position: absolute;
-			right: 11px;
+			right: 13px;
 			z-index: 999;
 			cursor: pointer !important;
 		}
 
 		.cross2 {
 			position: absolute;
-			right: -20px;
+			right: -22px;
 			z-index: 999;
 			cursor: pointer !important;
+			background: #ccc;
+			height: 30px;
+			width: 30px;
+			border-radius: 100% !important;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border: 3px solid #fff;
 		}
-
+		#addMoreButton svg{
+		    position: relative;
+			top: -5px;
+		}
 		.Proceedbnt {
 			position: fixed;
 			bottom: 0;
@@ -544,7 +559,7 @@
 <body>
 	<div class="container p-0">
 		<div class="screen1">
-			<header class="header px-3 border-bottom">
+			<header class="header px-3">
 				<section class="header-top py-3">
 					<div class="d-flex align-items-center justify-content-between btn-back">
 						<button class="btnico border-0 shadow-0 p-0" type="button">
@@ -568,83 +583,79 @@
 							<li class="input-group mb-2 headersearch d-flex align-items-center">
 								<input type="text" id="searchTextFieldOrigin" class="form-control w-100 place"
 									placeholder="Where From?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
-								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
-									xmlns="http://www.w3.org/2000/svg" onclick="emptyField('searchTextFieldOrigin')">
-									<path
-										d="M16 8L8 16M8.00001 8L16 16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-										stroke="#000000" stroke-width="1.5" stroke-linecap="round"
-										stroke-linejoin="round" />
+								<svg class="cross1" width="20" height="20" viewBox="0 -5 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" onclick="emptyField('searchTextFieldOrigin')">
+									<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+										<g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-518.000000, -1146.000000)" fill="#000000">
+											<path d="M540.647,1159.24 C541.039,1159.63 541.039,1160.27 540.647,1160.66 C540.257,1161.05 539.623,1161.05 539.232,1160.66 L536.993,1158.42 L534.725,1160.69 C534.331,1161.08 533.692,1161.08 533.298,1160.69 C532.904,1160.29 532.904,1159.65 533.298,1159.26 L535.566,1156.99 L533.327,1154.76 C532.936,1154.37 532.936,1153.73 533.327,1153.34 C533.718,1152.95 534.352,1152.95 534.742,1153.34 L536.981,1155.58 L539.281,1153.28 C539.676,1152.89 540.314,1152.89 540.708,1153.28 C541.103,1153.68 541.103,1154.31 540.708,1154.71 L538.408,1157.01 L540.647,1159.24 L540.647,1159.24 Z M545.996,1146 L528.051,1146 C527.771,1145.98 527.485,1146.07 527.271,1146.28 L518.285,1156.22 C518.074,1156.43 517.983,1156.71 517.998,1156.98 C517.983,1157.26 518.074,1157.54 518.285,1157.75 L527.271,1167.69 C527.467,1167.88 527.723,1167.98 527.979,1167.98 L527.979,1168 L545.996,1168 C548.207,1168 550,1166.21 550,1164 L550,1150 C550,1147.79 548.207,1146 545.996,1146 L545.996,1146 Z" id="delete" sketch:type="MSShapeGroup"></path>
+										</g>
+									</g>
 								</svg>
 							</li>
 
 							<li class="input-group mb-2 headersearch d-flex align-items-center">
 								<input type="text" id="searchTextFieldDestination" class="form-control w-100 place"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)" autofocus>
-								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
-									xmlns="http://www.w3.org/2000/svg" onclick="emptyField('searchTextFieldDestination')">
-									<path
-										d="M16 8L8 16M8.00001 8L16 16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-										stroke="#000000" stroke-width="1.5" stroke-linecap="round"
-										stroke-linejoin="round" />
+								<svg class="cross1" width="20" height="20" viewBox="0 -5 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" onclick="emptyField('searchTextFieldDestination')">
+									<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+										<g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-518.000000, -1146.000000)" fill="#000000">
+											<path d="M540.647,1159.24 C541.039,1159.63 541.039,1160.27 540.647,1160.66 C540.257,1161.05 539.623,1161.05 539.232,1160.66 L536.993,1158.42 L534.725,1160.69 C534.331,1161.08 533.692,1161.08 533.298,1160.69 C532.904,1160.29 532.904,1159.65 533.298,1159.26 L535.566,1156.99 L533.327,1154.76 C532.936,1154.37 532.936,1153.73 533.327,1153.34 C533.718,1152.95 534.352,1152.95 534.742,1153.34 L536.981,1155.58 L539.281,1153.28 C539.676,1152.89 540.314,1152.89 540.708,1153.28 C541.103,1153.68 541.103,1154.31 540.708,1154.71 L538.408,1157.01 L540.647,1159.24 L540.647,1159.24 Z M545.996,1146 L528.051,1146 C527.771,1145.98 527.485,1146.07 527.271,1146.28 L518.285,1156.22 C518.074,1156.43 517.983,1156.71 517.998,1156.98 C517.983,1157.26 518.074,1157.54 518.285,1157.75 L527.271,1167.69 C527.467,1167.88 527.723,1167.98 527.979,1167.98 L527.979,1168 L545.996,1168 C548.207,1168 550,1166.21 550,1164 L550,1150 C550,1147.79 548.207,1146 545.996,1146 L545.996,1146 Z" id="delete" sketch:type="MSShapeGroup"></path>
+										</g>
+									</g>
 								</svg>
-								
 							</li>
 
 							<li class="input-group mb-2 headersearch d-flex align-items-center li1 display-none">
 								<input type="text" id="destination1" class="form-control w-100"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
-								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
-									xmlns="http://www.w3.org/2000/svg" onclick="emptyField('destination1')">
-									<path
-										d="M16 8L8 16M8.00001 8L16 16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-										stroke="#000000" stroke-width="1.5" stroke-linecap="round"
-										stroke-linejoin="round" />
+								<svg class="cross1" width="20" height="20" viewBox="0 -5 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" onclick="emptyField('destination1')">
+									<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+										<g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-518.000000, -1146.000000)" fill="#000000">
+											<path d="M540.647,1159.24 C541.039,1159.63 541.039,1160.27 540.647,1160.66 C540.257,1161.05 539.623,1161.05 539.232,1160.66 L536.993,1158.42 L534.725,1160.69 C534.331,1161.08 533.692,1161.08 533.298,1160.69 C532.904,1160.29 532.904,1159.65 533.298,1159.26 L535.566,1156.99 L533.327,1154.76 C532.936,1154.37 532.936,1153.73 533.327,1153.34 C533.718,1152.95 534.352,1152.95 534.742,1153.34 L536.981,1155.58 L539.281,1153.28 C539.676,1152.89 540.314,1152.89 540.708,1153.28 C541.103,1153.68 541.103,1154.31 540.708,1154.71 L538.408,1157.01 L540.647,1159.24 L540.647,1159.24 Z M545.996,1146 L528.051,1146 C527.771,1145.98 527.485,1146.07 527.271,1146.28 L518.285,1156.22 C518.074,1156.43 517.983,1156.71 517.998,1156.98 C517.983,1157.26 518.074,1157.54 518.285,1157.75 L527.271,1167.69 C527.467,1167.88 527.723,1167.98 527.979,1167.98 L527.979,1168 L545.996,1168 C548.207,1168 550,1166.21 550,1164 L550,1150 C550,1147.79 548.207,1146 545.996,1146 L545.996,1146 Z" id="delete" sketch:type="MSShapeGroup"></path>
+										</g>
+									</g>
 								</svg>
-								
-
 								<svg class="cross2" width="20" height="20" viewBox="0 0 24 24" fill="none"
 									xmlns="http://www.w3.org/2000/svg" onclick="deleteLocation('destination1', 'li1')">
 									<path
 										d="M6.99486 7.00636C6.60433 7.39689 6.60433 8.03005 6.99486 8.42058L10.58 12.0057L6.99486 15.5909C6.60433 15.9814 6.60433 16.6146 6.99486 17.0051C7.38538 17.3956 8.01855 17.3956 8.40907 17.0051L11.9942 13.4199L15.5794 17.0051C15.9699 17.3956 16.6031 17.3956 16.9936 17.0051C17.3841 16.6146 17.3841 15.9814 16.9936 15.5909L13.4084 12.0057L16.9936 8.42059C17.3841 8.03007 17.3841 7.3969 16.9936 7.00638C16.603 6.61585 15.9699 6.61585 15.5794 7.00638L11.9942 10.5915L8.40907 7.00636C8.01855 6.61584 7.38538 6.61584 6.99486 7.00636Z"
-										fill="#0F0F0F" />
+										fill="#fff" />
 								</svg>
+
 							</li>
 
 							<li class="input-group mb-2 headersearch d-flex align-items-center li2 display-none">
 								<input type="text" id="destination2" class="form-control w-100"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
-								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
-									xmlns="http://www.w3.org/2000/svg" onclick="emptyField('destination2')">
-									<path
-										d="M16 8L8 16M8.00001 8L16 16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-										stroke="#000000" stroke-width="1.5" stroke-linecap="round"
-										stroke-linejoin="round" />
+								<svg class="cross1" width="20" height="20" viewBox="0 -5 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" onclick="emptyField('destination2')">
+									<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+										<g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-518.000000, -1146.000000)" fill="#000000">
+											<path d="M540.647,1159.24 C541.039,1159.63 541.039,1160.27 540.647,1160.66 C540.257,1161.05 539.623,1161.05 539.232,1160.66 L536.993,1158.42 L534.725,1160.69 C534.331,1161.08 533.692,1161.08 533.298,1160.69 C532.904,1160.29 532.904,1159.65 533.298,1159.26 L535.566,1156.99 L533.327,1154.76 C532.936,1154.37 532.936,1153.73 533.327,1153.34 C533.718,1152.95 534.352,1152.95 534.742,1153.34 L536.981,1155.58 L539.281,1153.28 C539.676,1152.89 540.314,1152.89 540.708,1153.28 C541.103,1153.68 541.103,1154.31 540.708,1154.71 L538.408,1157.01 L540.647,1159.24 L540.647,1159.24 Z M545.996,1146 L528.051,1146 C527.771,1145.98 527.485,1146.07 527.271,1146.28 L518.285,1156.22 C518.074,1156.43 517.983,1156.71 517.998,1156.98 C517.983,1157.26 518.074,1157.54 518.285,1157.75 L527.271,1167.69 C527.467,1167.88 527.723,1167.98 527.979,1167.98 L527.979,1168 L545.996,1168 C548.207,1168 550,1166.21 550,1164 L550,1150 C550,1147.79 548.207,1146 545.996,1146 L545.996,1146 Z" id="delete" sketch:type="MSShapeGroup"></path>
+										</g>
+									</g>
 								</svg>
-								
 								<svg class="cross2" width="20" height="20" viewBox="0 0 24 24" fill="none"
 									xmlns="http://www.w3.org/2000/svg" onclick="deleteLocation('destination2', 'li2')">
 									<path
 										d="M6.99486 7.00636C6.60433 7.39689 6.60433 8.03005 6.99486 8.42058L10.58 12.0057L6.99486 15.5909C6.60433 15.9814 6.60433 16.6146 6.99486 17.0051C7.38538 17.3956 8.01855 17.3956 8.40907 17.0051L11.9942 13.4199L15.5794 17.0051C15.9699 17.3956 16.6031 17.3956 16.9936 17.0051C17.3841 16.6146 17.3841 15.9814 16.9936 15.5909L13.4084 12.0057L16.9936 8.42059C17.3841 8.03007 17.3841 7.3969 16.9936 7.00638C16.603 6.61585 15.9699 6.61585 15.5794 7.00638L11.9942 10.5915L8.40907 7.00636C8.01855 6.61584 7.38538 6.61584 6.99486 7.00636Z"
-										fill="#0F0F0F" />
+										fill="#fff" />
 								</svg>
 							</li>
 
 							<li class="input-group mb-2 headersearch d-flex align-items-center li3 display-none">
 								<input type="text" id="destination3" class="form-control w-100"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
-								<svg class="cross1" width="15" height="15" viewBox="0 0 24 24" fill="none"
-									xmlns="http://www.w3.org/2000/svg" onclick="emptyField('destination3')">
-									<path
-										d="M16 8L8 16M8.00001 8L16 16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-										stroke="#000000" stroke-width="1.5" stroke-linecap="round"
-										stroke-linejoin="round" />
+								<svg class="cross1" width="20" height="20" viewBox="0 -5 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" onclick="emptyField('destination3')">
+									<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+										<g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-518.000000, -1146.000000)" fill="#000000">
+											<path d="M540.647,1159.24 C541.039,1159.63 541.039,1160.27 540.647,1160.66 C540.257,1161.05 539.623,1161.05 539.232,1160.66 L536.993,1158.42 L534.725,1160.69 C534.331,1161.08 533.692,1161.08 533.298,1160.69 C532.904,1160.29 532.904,1159.65 533.298,1159.26 L535.566,1156.99 L533.327,1154.76 C532.936,1154.37 532.936,1153.73 533.327,1153.34 C533.718,1152.95 534.352,1152.95 534.742,1153.34 L536.981,1155.58 L539.281,1153.28 C539.676,1152.89 540.314,1152.89 540.708,1153.28 C541.103,1153.68 541.103,1154.31 540.708,1154.71 L538.408,1157.01 L540.647,1159.24 L540.647,1159.24 Z M545.996,1146 L528.051,1146 C527.771,1145.98 527.485,1146.07 527.271,1146.28 L518.285,1156.22 C518.074,1156.43 517.983,1156.71 517.998,1156.98 C517.983,1157.26 518.074,1157.54 518.285,1157.75 L527.271,1167.69 C527.467,1167.88 527.723,1167.98 527.979,1167.98 L527.979,1168 L545.996,1168 C548.207,1168 550,1166.21 550,1164 L550,1150 C550,1147.79 548.207,1146 545.996,1146 L545.996,1146 Z" id="delete" sketch:type="MSShapeGroup"></path>
+										</g>
+									</g>
 								</svg>
-								
 								<svg class="cross2" width="20" height="20" viewBox="0 0 24 24" fill="none"
 									xmlns="http://www.w3.org/2000/svg" onclick="deleteLocation('destination3', 'li3')">
 									<path
 										d="M6.99486 7.00636C6.60433 7.39689 6.60433 8.03005 6.99486 8.42058L10.58 12.0057L6.99486 15.5909C6.60433 15.9814 6.60433 16.6146 6.99486 17.0051C7.38538 17.3956 8.01855 17.3956 8.40907 17.0051L11.9942 13.4199L15.5794 17.0051C15.9699 17.3956 16.6031 17.3956 16.9936 17.0051C17.3841 16.6146 17.3841 15.9814 16.9936 15.5909L13.4084 12.0057L16.9936 8.42059C17.3841 8.03007 17.3841 7.3969 16.9936 7.00638C16.603 6.61585 15.9699 6.61585 15.5794 7.00638L11.9942 10.5915L8.40907 7.00636C8.01855 6.61584 7.38538 6.61584 6.99486 7.00636Z"
-										fill="#0F0F0F" />
+										fill="#fff" />
 								</svg>
 							</li>
 						</ul>
@@ -687,12 +698,12 @@
 					</ul>
 				</section>
 			</header>
-			<div class="px-3 py-2">
+			<div class="px-3 py-2 bg-light">
 				<div class="tab-content" id="pills-tabContent">
 					<div class="tab-pane fade show active" id="pills-home" role="tabpanel"
 						aria-labelledby="pills-home-tab">
 						<div class="d-flex align-items-center border-bottom  justify-content-between">
-							<div class="py-2 d-flex gap-2 align-items-center">
+							<div class="py-3 d-flex gap-2 align-items-center">
 								<span>
 									<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
 										xmlns="http://www.w3.org/2000/svg">
@@ -711,7 +722,7 @@
 						</div>
 
 						<div class="d-flex align-items-center border-bottom  justify-content-between">
-							<div class="py-2 d-flex gap-2 align-items-center">
+							<div class="py-3 d-flex gap-2 align-items-center">
 								<span>
 									<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="16" height="16"
 										style="shape-rendering:geometricPrecision;text-rendering:geometricPrecision;image-rendering:optimizeQuality;fill-rule:evenodd;clip-rule:evenodd"
