@@ -7,10 +7,16 @@
 	<title>Hello, world!</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
 		crossorigin="anonymous">
-	<script type="text/javascript"
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-Aqxhu4qpY2Cr_9rbLslFi4sdIsUdLxk&libraries=places"></script>
-		<!-- AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg -->
+	
 	<script>
+		function gmNoop() { console.log('GMap Callback') }
+	</script>
+
+	<script type="text/javascript"
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-Aqxhu4qpY2Cr_9rbLslFi4sdIsUdLxk&libraries=places&callback=gmNoop"></script>
+		<!-- AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg -->	
+
+	<script>		
 		var autocompleteService, placesService, results, map, geocoder;
 		var currentSearchFieldId = "";
 		var placeIdHasToBeDeleted = ""
@@ -40,7 +46,8 @@
 
 		var currentLat = (typeof qs['currentLat'] == 'undefined') ? null : qs['currentLat'], 
 		currentLng = (typeof qs['currentLat'] == 'undefined') ? null : qs['currentLng'],
-		userId = qs['userId'];
+		userId = qs['userId'],
+		serviceId = (typeof qs['serviceId'] == 'undefined') ? null : qs['serviceId'];
 
 		var incommingData = (typeof qs['existingLocations'] == 'undefined' || qs['existingLocations'] === 'null') ? {} : JSON.parse(qs['existingLocations']);
 		// incommingData = {
@@ -201,6 +208,7 @@
 					currentSearchFieldId.setAttribute("data-lat", lat)
 					currentSearchFieldId.setAttribute("data-lng", lng)
 					currentSearchFieldId.setAttribute("disabled", true);
+					currentSearchFieldId.classList.add('place')
 					// Hide autocomplete results
 					results.style.display = 'none';
 					checkMoreThanTwoPlaces()					
@@ -538,7 +546,7 @@
 		<div class="screen1">
 			<header class="header px-3 border-bottom">
 				<section class="header-top py-3">
-					<div class="d-flex align-items-center justify-content-between">
+					<div class="d-flex align-items-center justify-content-between btn-back">
 						<button class="btnico border-0 shadow-0 p-0" type="button">
 							<svg fill="#000000" width="20" height="20" viewBox="0 0 52 52" data-name="Layer 1"
 								id="Layer_1" xmlns="http://www.w3.org/2000/svg">
@@ -813,13 +821,12 @@
 			</div>
 		</div>
 		</div>
-	</div>
+	</div>	
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
-	<script>
-
+	<script>		
 		const addButton = document.getElementById("addMoreButton");
 
 		addButton.addEventListener("click", () => {
@@ -964,9 +971,15 @@
 				// console.log(`you have to put at least 2 location`);
 				$('#locationErrorModel').modal('show');
 			}else{				
-				if (messageHandler) {
-                    messageHandler.postMessage(JSON.stringify(locations));
+				if (enteredLocationsHandler) {
+                    enteredLocationsHandler.postMessage(JSON.stringify(locations));
                 }
+			}
+		})
+
+		$(".btn-back").click(()=>{
+			if (exitPageHandler) {
+				exitPageHandler.postMessage('back');
 			}
 		})
 
@@ -1037,10 +1050,11 @@
 		}
 
 		const checkMoreThanTwoPlaces = () =>{
+			console.log($('.place').length);
 			if( $('.place').length > 1){
 				$('.btn-proceed-address').removeAttr('disabled')
 			}else{
-				$('.btn-proceed-address').addAttr('disabled')
+				$('.btn-proceed-address').attr('disabled', true)
 			}
 		}
 
@@ -1081,6 +1095,19 @@
 					
 				}
 			});		
+		}
+
+		function sevriceWiseManipulation() {
+			if(serviceId != null || serviceId != 'null'){
+				// switch (serviceId) {
+				// 	case 'SERVICE_':
+						
+				// 		break;
+				
+				// 	default:
+				// 		break;
+				// }
+			}
 		}
 
 		$(document).ready(function () {            
