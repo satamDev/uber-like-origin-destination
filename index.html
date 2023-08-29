@@ -48,8 +48,9 @@
 		currentLng = (typeof qs['currentLat'] == 'undefined') ? null : qs['currentLng'],
 		userId = qs['userId'],
 		serviceId = (typeof qs['serviceId'] == 'undefined') ? null : qs['serviceId']
-		isPickupChangeable = (typeof qs['isPickupChangeable'] == 'undefined' || qs['isPickupChangeable'] == 'null') ? 'false' : qs['isPickupChangeable'],
-		isDestinationAvailable = (typeof qs['isDestinationAvailable'] == 'undefined' || qs['isDestinationAvailable'] == 'null') ? 'false' : qs['isDestinationAvailable'];
+		isPickupChangeable = (typeof qs['isPickupChangeable'] == 'undefined' || qs['isPickupChangeable'] == 'null') ? 'true' : qs['isPickupChangeable'],
+		isDestinationAvailable = (typeof qs['isDestinationAvailable'] == 'undefined' || qs['isDestinationAvailable'] == 'null') ? 'true' : qs['isDestinationAvailable']
+		deliveryType = (typeof qs['deliveryType'] == 'undefined' || qs['deliveryType'] == 'null') ? null : qs['deliveryType'];
 
 
 		var incommingData = (typeof qs['existingLocations'] == 'undefined' || qs['existingLocations'] === 'null') ? {} : JSON.parse(qs['existingLocations']);
@@ -145,18 +146,33 @@
 
 			if(typeof incommingData != 'undefined' && Object.keys(incommingData).length > 1){}
 			else{
-				geocoder.geocode({
-					'latLng': new google.maps.LatLng(currentLat, currentLng)
-					}, function (results, status) {
-					if (status == google.maps.GeocoderStatus.OK) {
-						if (results[0]) {
-							document.getElementById('searchTextFieldOrigin').setAttribute("disabled", true);
-							document.getElementById('searchTextFieldOrigin').value = results[0].formatted_address
-							document.getElementById('searchTextFieldOrigin').setAttribute("data-lat", currentLat)
-							document.getElementById('searchTextFieldOrigin').setAttribute("data-lng", currentLng)
+				if(deliveryType != null && deliveryType == "DELIVERY_RECEIVE"){
+					geocoder.geocode({
+						'latLng': new google.maps.LatLng(currentLat, currentLng)
+						}, function (results, status) {
+						if (status == google.maps.GeocoderStatus.OK) {
+							if (results[0]) {
+								document.getElementById('searchTextFieldDestination').setAttribute("disabled", true);
+								document.getElementById('searchTextFieldDestination').value = results[0].formatted_address
+								document.getElementById('searchTextFieldDestination').setAttribute("data-lat", currentLat)
+								document.getElementById('searchTextFieldDestination').setAttribute("data-lng", currentLng)
+							}
 						}
-					}
-				});
+					});
+				}else{
+					geocoder.geocode({
+						'latLng': new google.maps.LatLng(currentLat, currentLng)
+						}, function (results, status) {
+						if (status == google.maps.GeocoderStatus.OK) {
+							if (results[0]) {
+								document.getElementById('searchTextFieldOrigin').setAttribute("disabled", true);
+								document.getElementById('searchTextFieldOrigin').value = results[0].formatted_address
+								document.getElementById('searchTextFieldOrigin').setAttribute("data-lat", currentLat)
+								document.getElementById('searchTextFieldOrigin').setAttribute("data-lng", currentLng)
+							}
+						}
+					});
+				}
 			}
 
 			google.maps.event.addListener(map, 'dragend', function () {
@@ -171,7 +187,7 @@
 							address = results[0].formatted_address;
 							document.getElementById('onMapAddressText').innerHTML = address
 							document.getElementById('onMapAddressTextLat').value = latlng.lat
-							document.getElementById('onMapAddressTextLng').value = latlng.lng
+							document.getElementById('onMapAddressTextLng').value = latlng.lng							
 						}
 					}
 				});
@@ -224,6 +240,8 @@
 			document.getElementById(currentSearchFieldIdOnFocus).setAttribute("data-lat", lat)
 			document.getElementById(currentSearchFieldIdOnFocus).setAttribute("data-lng", lng)
 			document.getElementById(currentSearchFieldIdOnFocus).setAttribute("disabled", true)
+			document.getElementById(currentSearchFieldIdOnFocus).classList.add('place')
+			checkMoreThanTwoPlaces()
 		}
 
 		// Place search callback
@@ -293,6 +311,8 @@
 						document.getElementById(currentSearchFieldIdOnFocus).value = results[0].formatted_address
 						document.getElementById(currentSearchFieldIdOnFocus).setAttribute("data-lat", currentLat)
 						document.getElementById(currentSearchFieldIdOnFocus).setAttribute("data-lng", currentLng)
+						document.getElementById(currentSearchFieldIdOnFocus).classList.add('place')
+						checkMoreThanTwoPlaces()
 					}
 				}
 			});
@@ -564,7 +584,7 @@
 		<div class="screen1">
 			<header class="header px-3">
 				<section class="header-top py-3">
-					<div class="d-flex align-items-center justify-content-between btn-back">
+					<div class="d-flex align-items-center justify-content-between btn-page-back">
 						<button class="btnico border-0 shadow-0 p-0" type="button">
 							<svg fill="#000000" width="20" height="20" viewBox="0 0 52 52" data-name="Layer 1"
 								id="Layer_1" xmlns="http://www.w3.org/2000/svg">
@@ -705,7 +725,7 @@
 				<div class="tab-content" id="pills-tabContent">
 					<div class="tab-pane fade show active" id="pills-home" role="tabpanel"
 						aria-labelledby="pills-home-tab">
-						<div class="d-flex align-items-center border-bottom  justify-content-between">
+						<div class="d-flex align-items-center border-bottom justify-content-between" onclick="initGeolocation()">
 							<div class="py-3 d-flex gap-2 align-items-center">
 								<span>
 									<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -719,12 +739,12 @@
 									</svg>
 								</span>
 								<div class="">
-									<h5 class="m-0 cursor-pointer" onclick="initGeolocation()">Current Location</h5>
+									<h5 class="m-0 cursor-pointer">Current Location</h5>
 								</div>
 							</div>
 						</div>
 
-						<div class="d-flex align-items-center border-bottom  justify-content-between">
+						<div class="d-flex align-items-center border-bottom justify-content-between mapsecclk">
 							<div class="py-3 d-flex gap-2 align-items-center">
 								<span>
 									<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="16" height="16"
@@ -756,7 +776,7 @@
 									</svg>
 								</span>
 								<div>
-									<h5 class="m-0 cursor-pointer mapsecclk">Set Location On Map</h5>
+									<h5 class="m-0 cursor-pointer">Set Location On Map</h5>
 								</div>
 							</div>	
 						</div>
@@ -842,17 +862,22 @@
 
 	<script>		
 		const addButton = document.getElementById("addMoreButton");
+		var permissableForProceed = false;
 
 		addButton.addEventListener("click", () => {
 			if ($('.li1').css('display') == 'none') {
 				$('.li1').removeClass('display-none')
-				$('#destination1').addClass('place')
+				// $('#destination1').addClass('place')
 			} else if ($('.li2').css('display') == 'none') {
-				$('.li2').removeClass('display-none')
-				$('#destination2').addClass('place')
+				if( $("#searchTextFieldOrigin").val() != "" && $("#searchTextFieldDestination").val() != "" && $("#destination1").val() != "" ){
+					$('.li2').removeClass('display-none')
+					// $('#destination2').addClass('place')
+				}
 			} else if ($('.li3').css('display') == 'none') {
-				$('.li3').removeClass('display-none')
-				$('#destination3').addClass('place')
+				if( $("#searchTextFieldOrigin").val() != "" && $("#searchTextFieldDestination").val() != "" && $("#destination1").val() != "" && $("#destination2").val() != ""){
+					$('.li3').removeClass('display-none')
+					// $('#destination3').addClass('place')
+				}
 			}
 		});
 
@@ -931,6 +956,9 @@
 			$('#' + currentSearchFieldIdOnFocus).attr('data-lat', $('#onMapAddressTextLat').val())
 			$('#' + currentSearchFieldIdOnFocus).attr('data-lng', $('#onMapAddressTextLng').val())
 
+			$('#' + currentSearchFieldIdOnFocus).addClass('place')
+			checkMoreThanTwoPlaces()
+
 			$(".screen1").css("display", "block");
 			$("#mapsec").css("display", "none");
 		})
@@ -979,11 +1007,22 @@
 				}
 			})
 			locations['waypoints'] = waypoints
-			// console.log(locations);		
+			
+			if(typeof locations['destination'] == 'undefined'){
+				locations['destination'] = {}
+			}
+
+			console.log(locations);		
 			// console.log(Object.keys(locations).length);	
 			if( Object.keys(locations).length < 3){
-				// console.log(`you have to put at least 2 location`);
-				$('#locationErrorModel').modal('show');
+				if(permissableForProceed){
+					if (enteredLocationsHandler) {
+						enteredLocationsHandler.postMessage(JSON.stringify(locations));
+					}
+				}else{
+					// console.log(`you have to put at least 2 location`);
+					$('#locationErrorModel').modal('show');
+				}
 			}else{				
 				if (enteredLocationsHandler) {
                     enteredLocationsHandler.postMessage(JSON.stringify(locations));
@@ -991,7 +1030,7 @@
 			}
 		})
 
-		$(".btn-back").click(()=>{
+		$(".btn-page-back").click(()=>{
 			if (exitPageHandler) {
 				exitPageHandler.postMessage('back');
 			}
@@ -1112,17 +1151,19 @@
 		}
 
 		function hideOriginCross() {
-			if(isPickupChangeable == 'true'){
+			if(isPickupChangeable == 'false'){
 				$(".searchTextFieldOriginCross").css({'display':'none'});
 			}
 		}
 		
 		function hideDestinationField() {
-			if(isDestinationAvailable == 'true'){
+			if(isDestinationAvailable == 'false'){
 				$(".markprogres").css({'display':'none'})
 				$("#destinationList").removeClass('d-flex');
 				$("#destinationList").css({'display':'none'});				
 				$("#addMoreButton").css({'display': 'none'})
+				permissableForProceed = true
+				$('.btn-proceed-address').removeAttr('disabled')
 			}
 		}
 
