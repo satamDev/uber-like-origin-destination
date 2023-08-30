@@ -4,16 +4,14 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<title>Hello, world!</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-		crossorigin="anonymous">
+	<title>Location Search | v-xplore-Developed By Satam Kundu</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 	
 	<script>
 		function gmNoop() { console.log('GMap Callback') }
 	</script>
 
-	<script type="text/javascript"
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-Aqxhu4qpY2Cr_9rbLslFi4sdIsUdLxk&libraries=places&callback=gmNoop"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-Aqxhu4qpY2Cr_9rbLslFi4sdIsUdLxk&libraries=places&callback=gmNoop"></script>
 		<!-- AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg -->	
 
 	<script>		
@@ -102,9 +100,9 @@
 				map: map,
 				draggable: false,
 				icon : {
-					url :'./marker.svg',
-					size: new google.maps.Size(36, 50),
-					scaledSize: new google.maps.Size(36, 50),
+					url :'./marker_pin.svg',
+					size: new google.maps.Size(50, 70),
+					scaledSize: new google.maps.Size(50, 70),
 				}
 			});
 
@@ -554,8 +552,14 @@
 			bottom: 0;
 			left: 0;
 			width: 100%;
-			background-color: #fff;
+			background-color: #fff;			
 		}
+
+		.btn-big{
+			padding: 12px 0px;
+		    font-size: 18px;
+		}
+
 		.overflow-hidden {
 			overflow: hidden;
 		}
@@ -615,7 +619,7 @@
 								</svg>
 							</li>
 
-							<li class="input-group mb-2 headersearch d-flex align-items-center" id="destinationList">
+							<li class="input-group mb-2 headersearch d-flex align-items-center destinationList">
 								<input type="text" id="searchTextFieldDestination" class="form-control w-100 place"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)" autofocus>
 								<svg class="cross1" width="20" height="20" viewBox="0 -5 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" onclick="emptyField('searchTextFieldDestination')">
@@ -627,7 +631,7 @@
 								</svg>
 							</li>
 
-							<li class="input-group mb-2 headersearch d-flex align-items-center li1 display-none">
+							<li class="input-group mb-2 headersearch d-flex align-items-center li1 display-none destinationList">
 								<input type="text" id="destination1" class="form-control w-100"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
 								<svg class="cross1" width="20" height="20" viewBox="0 -5 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" onclick="emptyField('destination1')">
@@ -646,7 +650,7 @@
 
 							</li>
 
-							<li class="input-group mb-2 headersearch d-flex align-items-center li2 display-none">
+							<li class="input-group mb-2 headersearch d-flex align-items-center li2 display-none destinationList">
 								<input type="text" id="destination2" class="form-control w-100"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
 								<svg class="cross1" width="20" height="20" viewBox="0 -5 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" onclick="emptyField('destination2')">
@@ -664,7 +668,7 @@
 								</svg>
 							</li>
 
-							<li class="input-group mb-2 headersearch d-flex align-items-center li3 display-none">
+							<li class="input-group mb-2 headersearch d-flex align-items-center li3 display-none destinationList">
 								<input type="text" id="destination3" class="form-control w-100"
 									placeholder="Where to?" onfocus="setCurrentSearchFieldIdOnFocus(this.id)">
 								<svg class="cross1" width="20" height="20" viewBox="0 -5 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" onclick="emptyField('destination3')">
@@ -795,7 +799,7 @@
 			</div>
 
 			<div class="Proceedbnt mt-auto p-3">
-				<button class="btn btn-dark w-100 mb-2 btn-proceed-address" disabled>Proceed</button>
+				<button class="btn btn-dark w-100 mb-2 btn-proceed-address btn-big" disabled>Proceed</button>
 			</div>
 		</div>
 
@@ -815,9 +819,9 @@
 			<div class="p-3 bottomstky">
 				<h4>Choose your <span class="typeOfAddress"></span> spot</h4>
 				<div class="mb-3"><span id="onMapAddressText"></span></div>
-				<button class="btn btn-dark w-100 mb-2 btn-confirm-address">Confirm <span
+				<button class="btn btn-dark w-100 mb-2 btn-confirm-address btn-big">Confirm <span
 						class="typeOfAddress"></span></button>
-				<button class="btn btn-light w-100 mb-2 btn-back">Cancel</button>
+				<button class="btn btn-light w-100 mb-2 btn-back btn-big">Cancel</button>
 			</div>
 		</div>
 	</div>
@@ -1159,9 +1163,11 @@
 		function hideDestinationField() {
 			if(isDestinationAvailable == 'false'){
 				$(".markprogres").css({'display':'none'})
-				$("#destinationList").removeClass('d-flex');
-				$("#destinationList").css({'display':'none'});				
 				$("#addMoreButton").css({'display': 'none'})
+
+				$(".destinationList").removeClass('d-flex');
+				$(".destinationList").css({'display':'none'});				
+				
 				permissableForProceed = true
 				$('.btn-proceed-address').removeAttr('disabled')
 			}
