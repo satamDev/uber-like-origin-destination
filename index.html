@@ -16,10 +16,7 @@
 
 	<script>		
 		var autocompleteService, placesService, results, map, geocoder;
-		var currentSearchFieldId = "";
-		var placeIdHasToBeDeleted = ""
-
-		var currentSearchFieldIdOnFocus = "";
+		var currentSearchFieldId = placeIdHasToBeDeleted = currentSearchFieldIdOnFocus = "", isClickedAddMoreButton = false;
 
 		function setCurrentSearchFieldIdOnFocus(id) {
 			currentSearchFieldIdOnFocus = id
@@ -70,7 +67,7 @@
 		// 			text: 'Kolkata, West Bengal, India'
 		// 		}
 		// 	]
-		// }		
+		// }
 
 		function initialize() {
 			let origin = document.getElementById('searchTextFieldOrigin');
@@ -244,6 +241,7 @@
 
 		// Place search callback
 		function callback(predictions, status) {
+			hidePreLoadedElements()
 			// Empty results container
 			results.innerHTML = '';
 
@@ -299,7 +297,7 @@
 		google.maps.event.addDomListener(window, 'load', initialize);
 
 		// Fetching current location logic
-		function initGeolocation() {	
+		function initGeolocation() {
 			geocoder.geocode({
 				'latLng': new google.maps.LatLng(currentLat, currentLng)
 				}, function (results, status) {
@@ -576,10 +574,9 @@
 			cursor: pointer;
 		}
 		.favourites svg.active path {
-		stroke: #F39C04;
-		fill: #F39C04;
-
-}
+			stroke: #F39C04;
+			fill: #F39C04;
+		}
 	</style>
 </head>
 
@@ -694,8 +691,7 @@
 							</svg>
 						</button>
 					</div>
-					<ul class="nav nav-pills m-0 justify-content-center justify-content-evenly" id="pills-tab"
-						role="tablist">
+					<ul class="nav nav-pills m-0 justify-content-center justify-content-evenly pre-loaded-elements" id="pills-tab" role="tablist">
 						<li class="nav-item" role="presentation">
 							<button class="nav-link active bg-white py-1" id="pills-home-tab" data-bs-toggle="pill"
 								data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home"
@@ -727,13 +723,11 @@
 			</header>
 			<div class="px-3 py-2 bg-light">
 				<div class="tab-content" id="pills-tabContent">
-					<div class="tab-pane fade show active" id="pills-home" role="tabpanel"
-						aria-labelledby="pills-home-tab">
-						<div class="d-flex align-items-center border-bottom justify-content-between" onclick="initGeolocation()">
+					<div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+						<div class="d-flex align-items-center border-bottom justify-content-between pre-loaded-elements" onclick="initGeolocation()">
 							<div class="py-3 d-flex gap-2 align-items-center">
 								<span>
-									<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-										xmlns="http://www.w3.org/2000/svg">
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none"	xmlns="http://www.w3.org/2000/svg">
 										<path fill-rule="evenodd" clip-rule="evenodd"
 											d="M12 16.5017C14.4853 16.5017 16.5 14.487 16.5 12.0017C16.5 9.5164 14.4853 7.50168 12 7.50168C9.51472 7.50168 7.5 9.5164 7.5 12.0017C7.5 14.487 9.51472 16.5017 12 16.5017ZM12 14.5034C10.6184 14.5034 9.49832 13.3833 9.49832 12.0017C9.49832 10.62 10.6184 9.5 12 9.5C13.3816 9.5 14.5017 10.62 14.5017 12.0017C14.5017 13.3833 13.3816 14.5034 12 14.5034Z"
 											fill="#0F0F0F" />
@@ -748,7 +742,7 @@
 							</div>
 						</div>
 
-						<div class="d-flex align-items-center border-bottom justify-content-between mapsecclk">
+						<div class="d-flex align-items-center border-bottom justify-content-between mapsecclk pre-loaded-elements">
 							<div class="py-3 d-flex gap-2 align-items-center">
 								<span>
 									<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="16" height="16"
@@ -869,6 +863,7 @@
 		var permissableForProceed = false;
 
 		addButton.addEventListener("click", () => {
+			isClickedAddMoreButton = true;
 			if ($('.li1').css('display') == 'none') {
 				$('.li1').removeClass('display-none')
 				// $('#destination1').addClass('place')
@@ -967,6 +962,14 @@
 			$("#mapsec").css("display", "none");
 		})
 
+		const hidePreLoadedElements = () => {
+			$('.pre-loaded-elements').addClass('display-none')
+		}
+
+		const showPreLoadedElements = () => {
+			$('.pre-loaded-elements').removeClass('display-none')
+		}
+
 		function deleteLocation(inputFieldId, parentDivClass){
 			$('#'+inputFieldId).val('')
 			$('#'+inputFieldId).removeClass('place')
@@ -975,14 +978,15 @@
 		}
 
 		function emptyField(id) {
+			showPreLoadedElements()
 			document.getElementById(id).value = ""
 			document.getElementById(id).removeAttribute("disabled")
 			$('#'+id).removeClass('place')
 			document.getElementById(id).focus()
-			checkMoreThanTwoPlaces()
+			checkMoreThanTwoPlaces()			
 		}
 
-		$(".btn-proceed-address").click(()=>{
+		const sendFinalDataToNext = () => {
 			let locations = {};
 			let i = 0;
 			let waypoints = []
@@ -1014,10 +1018,8 @@
 			
 			if(typeof locations['destination'] == 'undefined'){
 				locations['destination'] = {}
-			}
-
-			console.log(locations);		
-			// console.log(Object.keys(locations).length);	
+			}		
+			
 			if( Object.keys(locations).length < 3){
 				if(permissableForProceed){
 					if (enteredLocationsHandler) {
@@ -1032,6 +1034,10 @@
                     enteredLocationsHandler.postMessage(JSON.stringify(locations));
                 }
 			}
+		}
+
+		$(".btn-proceed-address").click(()=>{
+			sendFinalDataToNext()
 		})
 
 		$(".btn-page-back").click(()=>{
@@ -1113,6 +1119,12 @@
 			}else{
 				$('.btn-proceed-address').attr('disabled', true)
 			}
+
+			
+			if(!isClickedAddMoreButton){
+				console.log('auto press proceed button');
+				sendFinalDataToNext()
+			}
 		}
 
 		const setSavedPlaces = (placeId, text) => {
@@ -1170,19 +1182,6 @@
 				
 				permissableForProceed = true
 				$('.btn-proceed-address').removeAttr('disabled')
-			}
-		}
-
-		function sevriceWiseManipulation() {
-			if(serviceId != null || serviceId != 'null'){
-				// switch (serviceId) {
-				// 	case 'SERVICE_':
-						
-				// 		break;
-				
-				// 	default:
-				// 		break;
-				// }
 			}
 		}
 
