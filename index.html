@@ -7,12 +7,7 @@
 	<title>Location Search | v-xplore-Developed By Satam Kundu</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 	
-	<script>
-		function gmNoop() { console.log('GMap Callback') }
-	</script>
-
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-Aqxhu4qpY2Cr_9rbLslFi4sdIsUdLxk&libraries=places&callback=gmNoop"></script>
-		<!-- AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg -->	
+	<script src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=initAutocomplete&key=AIzaSyC-Aqxhu4qpY2Cr_9rbLslFi4sdIsUdLxk" async defer></script>
 
 	<script>		
 		var autocompleteService, sessionToken, placesService, results, map, geocoder;
@@ -48,28 +43,11 @@
 		deliveryType = (typeof qs['deliveryType'] == 'undefined' || qs['deliveryType'] == 'null') ? null : qs['deliveryType'];
 
 
-		var incommingData = (typeof qs['existingLocations'] == 'undefined' || qs['existingLocations'] === 'null') ? {} : JSON.parse(qs['existingLocations']);
-		// incommingData = {
-		// 	destination:{ 
-		// 		lat:22.5830002,
-		// 		lng:88.3372909,
-		// 		text:"Howrah Railway Station, Howrah, West Bengal, India"
-		// 	},
-		// 	origin : {
-		// 		lat : 22.581013137375813,
-		// 		lng : 88.37488662696201,
-		// 		text : "6/1A, Yogi Para, Garpar, Machuabazar, Kolkata, West Bengal 700009, India"
-		// 	},
-		// 	waypoints : [
-		// 		{
-		// 			lat: 22.572646, 
-		// 			lng: 88.36389500000001, 
-		// 			text: 'Kolkata, West Bengal, India'
-		// 		}
-		// 	]
-		// }
+		var incommingData = (typeof qs['existingLocations'] == 'undefined' || qs['existingLocations'] === 'null') ? {} : JSON.parse(qs['existingLocations']);		
 
-		function initialize() {
+		var theFields = ['searchTextFieldOrigin','searchTextFieldDestination','destination1','destination2', 'destination3'];
+
+		function initAutocomplete() {
 			let origin = document.getElementById('searchTextFieldOrigin');
 			let destination = document.getElementById('searchTextFieldDestination');
 
@@ -97,51 +75,28 @@
 				map: map,
 				draggable: false,
 				icon : {
-					url :'./marker_pin.svg',
+					url :'./assets/marker_pin.svg',
 					size: new google.maps.Size(50, 70),
 					scaledSize: new google.maps.Size(50, 70),
 				}
 			});
 
-			google.maps.event.addDomListener(origin, 'input', function () {
-				results.style.display = 'block';
-				currentSearchFieldId = origin;
-				if(origin.value.length > 4){
-					getPlacePredictions(origin.value);
-				}
-			});
 
-			google.maps.event.addDomListener(destination, 'input', function () {
-				results.style.display = 'block';
-				currentSearchFieldId = destination;
-				if(destination.value.length > 4){
-					getPlacePredictions(destination.value);
-				}
+			const location = new google.maps.LatLng(currentLat, currentLng);
+			var radius = 15000;
+			var circle = new google.maps.Circle({
+				center: location,
+				radius: radius
 			});
-
-			google.maps.event.addDomListener(destination1, 'input', function () {
-				results.style.display = 'block';
-				currentSearchFieldId = destination1;
-				if(destination1.value.length > 4){
-					getPlacePredictions(destination1.value);
-				}
-			});
-
-			google.maps.event.addDomListener(destination2, 'input', function () {
-				results.style.display = 'block';
-				currentSearchFieldId = destination2;
-				if(destination2.value.length > 4){
-					getPlacePredictions(destination2.value);
-				}
-			});
-
-			google.maps.event.addDomListener(destination3, 'input', function () {
-				results.style.display = 'block';
-				currentSearchFieldId = destination3;
-				if(destination3.value.length > 4){
-					getPlacePredictions(destination3.value);
-				}
-			});
+			for (i = 0;i < theFields.length; i++){
+				setupPlaceChangedListener(new google.maps.places.Autocomplete((document.getElementById(theFields[i])),
+				{ 
+					bounds: circle.getBounds(),
+					componentRestrictions: { country: "ind" },
+					fields:['geometry', "name"],
+					types: ['establishment', 'geocode']
+				}))				
+			}				
 
 			google.maps.event.addListener(map, 'drag', function () {
 				marker.setPosition(map.getCenter());
@@ -180,7 +135,7 @@
 				}
 			}
 
-			google.maps.event.addListener(map, 'dragend', function () {
+			google.maps.event.addListener(map, 'dragend', function () {				
 				let latlng = marker.getPosition().toJSON();
 				let address = "";
 
@@ -197,117 +152,22 @@
 					}
 				});
 			});
-			
-			sessionToken = new google.maps.places.AutocompleteSessionToken();			
-			autocompleteService = new google.maps.places.AutocompleteService();
-			placesService = new google.maps.places.PlacesService(map);
 		}
 
-		function getPlacePredictions(search) {
-			// console.log(sessionToken);
-			const location = new google.maps.LatLng(currentLat, currentLng );
-			var radius = 15000;
-			var circle = new google.maps.Circle({
-				center: location,
-				radius: radius
-			});
-			autocompleteService.getPlacePredictions({
-				bounds: circle.getBounds(),
-				input: search,
-				sessionToken: sessionToken,
-				componentRestrictions: { country: "ind" },
-				fields: ["place_id"],
-				types: ['establishment']
-			}, callback);
-		}
-
-		// Get place details
-		function getPlaceDetails(placeId) {
-			var request = {
-				placeId: placeId
-			};
-
-			placesService.getDetails(request, function (place, status) {
-				if (status === google.maps.places.PlacesServiceStatus.OK) {
-					sessionToken = new google.maps.places.AutocompleteSessionToken();
-					let latlng = place.geometry.location.toJSON();
-					let lat = latlng.lat, lng = latlng.lng;
-					currentSearchFieldId.value = place.formatted_address;
-					currentSearchFieldId.setAttribute("data-lat", lat)
-					currentSearchFieldId.setAttribute("data-lng", lng)
-					currentSearchFieldId.setAttribute("disabled", true);
-					currentSearchFieldId.classList.add('place')
-					// Hide autocomplete results
-					results.style.display = 'none';
-					checkMoreThanTwoPlaces()					
-				}
+		const setupPlaceChangedListener = (autocomplete) => {
+			autocomplete.addListener('place_changed', () => {
+				var place = autocomplete.getPlace();
+				console.log(place);	
+				let latlng = place.geometry.location.toJSON();
+				let lat = latlng.lat, lng = latlng.lng;
+				document.getElementById(currentSearchFieldIdOnFocus).value = place.name;
+				document.getElementById(currentSearchFieldIdOnFocus).setAttribute("data-lat", lat)
+				document.getElementById(currentSearchFieldIdOnFocus).setAttribute("data-lng", lng)
+				document.getElementById(currentSearchFieldIdOnFocus).setAttribute("disabled", true);
+				document.getElementById(currentSearchFieldIdOnFocus).classList.add('place')				
+				checkMoreThanTwoPlaces()	
 			});
 		}
-
-		function setLocationFromSavedPlace(lat, lng, text) {
-			document.getElementById(currentSearchFieldIdOnFocus).value = text
-			document.getElementById(currentSearchFieldIdOnFocus).setAttribute("data-lat", lat)
-			document.getElementById(currentSearchFieldIdOnFocus).setAttribute("data-lng", lng)
-			document.getElementById(currentSearchFieldIdOnFocus).setAttribute("disabled", true)
-			document.getElementById(currentSearchFieldIdOnFocus).classList.add('place')
-			checkMoreThanTwoPlaces()
-		}
-
-		// Place search callback
-		function callback(predictions, status) {
-			console.log(predictions);
-			hidePreLoadedElements()
-			// Empty results container
-			results.innerHTML = '';
-
-			// Place service status error
-			if (status != google.maps.places.PlacesServiceStatus.OK) {
-				results.innerHTML = `<div class="py-2 border-bottom d-flex gap-2 cursor-pointer">						
-						<div class="">
-							<h5 class="m-0 search-result text-red">Please try again. Status: ${status}</h5>							
-						</div>
-					</div>`
-				return;
-			}
-			
-			for (var i = 0, prediction; prediction = predictions[i]; i++) {
-				results.innerHTML += `<div class="d-flex align-items-center border-bottom justify-content-between">
-					<div class="py-3 d-flex gap-2 cursor-pointer">
-						<span>
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-								<circle cx="12" cy="12" r="9" stroke="#000000" stroke-linecap="round"
-									stroke-linejoin="round" stroke-width="2" />
-								<path d="M12 7V10.7639C12 11.5215 12.428 12.214 13.1056 12.5528L16 14"
-									stroke="#F39C04" stroke-linecap="round" stroke-linejoin="round"
-									stroke-width="2" />
-							</svg>
-						</span>
-						<div class="">
-							<h5 class="m-0 search-result" data-placeid="${prediction.place_id}" data-name="${prediction.terms[0].value}">${prediction.description}</h5>							
-						</div>
-					</div>
-					<div class="favourites ms-auto">
-						<svg class="" id="${prediction.place_id}" width="21" height="21" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" onclick="setSavedPlaces('${prediction.place_id}', '${prediction.description}')">
-							<path d="M11.2691 4.41115C11.5006 3.89177 11.6164 3.63208 11.7776 3.55211C11.9176 3.48263 12.082 3.48263 12.222 3.55211C12.3832 3.63208 12.499 3.89177 12.7305 4.41115L14.5745 8.54808C14.643 8.70162 14.6772 8.77839 14.7302 8.83718C14.777 8.8892 14.8343 8.93081 14.8982 8.95929C14.9705 8.99149 15.0541 9.00031 15.2213 9.01795L19.7256 9.49336C20.2911 9.55304 20.5738 9.58288 20.6997 9.71147C20.809 9.82316 20.8598 9.97956 20.837 10.1342C20.8108 10.3122 20.5996 10.5025 20.1772 10.8832L16.8125 13.9154C16.6877 14.0279 16.6252 14.0842 16.5857 14.1527C16.5507 14.2134 16.5288 14.2807 16.5215 14.3503C16.5132 14.429 16.5306 14.5112 16.5655 14.6757L17.5053 19.1064C17.6233 19.6627 17.6823 19.9408 17.5989 20.1002C17.5264 20.2388 17.3934 20.3354 17.2393 20.3615C17.0619 20.3915 16.8156 20.2495 16.323 19.9654L12.3995 17.7024C12.2539 17.6184 12.1811 17.5765 12.1037 17.56C12.0352 17.5455 11.9644 17.5455 11.8959 17.56C11.8185 17.5765 11.7457 17.6184 11.6001 17.7024L7.67662 19.9654C7.18404 20.2495 6.93775 20.3915 6.76034 20.3615C6.60623 20.3354 6.47319 20.2388 6.40075 20.1002C6.31736 19.9408 6.37635 19.6627 6.49434 19.1064L7.4341 14.6757C7.46898 14.5112 7.48642 14.429 7.47814 14.3503C7.47081 14.2807 7.44894 14.2134 7.41394 14.1527C7.37439 14.0842 7.31195 14.0279 7.18708 13.9154L3.82246 10.8832C3.40005 10.5025 3.18884 10.3122 3.16258 10.1342C3.13978 9.97956 3.19059 9.82316 3.29993 9.71147C3.42581 9.58288 3.70856 9.55304 4.27406 9.49336L8.77835 9.01795C8.94553 9.00031 9.02911 8.99149 9.10139 8.95929C9.16534 8.93081 9.2226 8.8892 9.26946 8.83718C9.32241 8.77839 9.35663 8.70162 9.42508 8.54808L11.2691 4.41115Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-						</svg>
-					</div>
-				</div>`
-			}			
-
-			var items = document.getElementsByClassName("search-result");
-
-			// Results items click
-			for (var i = 0, item; item = items[i]; i++) {
-				item.onclick = function () {
-					if (this.dataset.placeid) {
-						getPlaceDetails(this.dataset.placeid);
-					}
-				};
-			}
-		}
-
-		google.maps.event.addDomListener(window, 'load', initialize);
 
 		// Fetching current location logic
 		function initGeolocation() {
@@ -792,7 +652,7 @@
 							</div>	
 						</div>
 						
-						<div class="searchgroup pac-container" id="results">
+						<!-- <div class="searchgroup pac-container" id="results"> -->
 
 						</div>						
 					</div>
