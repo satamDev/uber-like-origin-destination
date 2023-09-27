@@ -17,6 +17,7 @@
 	<script>		
 		var autocompleteService, sessionToken, placesService, results, map, geocoder;
 		var currentSearchFieldId = placeIdHasToBeDeleted = currentSearchFieldIdOnFocus = "", isClickedAddMoreButton = false;
+		var debounceTimerInMiliSec = 500;
 
 		function setCurrentSearchFieldIdOnFocus(id) {
 			currentSearchFieldIdOnFocus = id
@@ -47,27 +48,7 @@
 		isDestinationAvailable = (typeof qs['isDestinationAvailable'] == 'undefined' || qs['isDestinationAvailable'] == 'null') ? 'true' : qs['isDestinationAvailable']
 		deliveryType = (typeof qs['deliveryType'] == 'undefined' || qs['deliveryType'] == 'null') ? null : qs['deliveryType'];
 
-
-		var incommingData = (typeof qs['existingLocations'] == 'undefined' || qs['existingLocations'] === 'null') ? {} : JSON.parse(qs['existingLocations']);
-		// incommingData = {
-		// 	destination:{ 
-		// 		lat:22.5830002,
-		// 		lng:88.3372909,
-		// 		text:"Howrah Railway Station, Howrah, West Bengal, India"
-		// 	},
-		// 	origin : {
-		// 		lat : 22.581013137375813,
-		// 		lng : 88.37488662696201,
-		// 		text : "6/1A, Yogi Para, Garpar, Machuabazar, Kolkata, West Bengal 700009, India"
-		// 	},
-		// 	waypoints : [
-		// 		{
-		// 			lat: 22.572646, 
-		// 			lng: 88.36389500000001, 
-		// 			text: 'Kolkata, West Bengal, India'
-		// 		}
-		// 	]
-		// }
+		var incommingData = (typeof qs['existingLocations'] == 'undefined' || qs['existingLocations'] === 'null') ? {} : JSON.parse(qs['existingLocations']);		
 
 		function initialize() {
 			let origin = document.getElementById('searchTextFieldOrigin');
@@ -97,51 +78,51 @@
 				map: map,
 				draggable: false,
 				icon : {
-					url :'./marker_pin.svg',
+					url :'./assets/marker_pin.svg',
 					size: new google.maps.Size(50, 70),
 					scaledSize: new google.maps.Size(50, 70),
 				}
 			});
 
-			google.maps.event.addDomListener(origin, 'input', function () {
+			google.maps.event.addDomListener(origin, 'input', debounce(function () {
 				results.style.display = 'block';
 				currentSearchFieldId = origin;
 				if(origin.value.length > 4){
 					getPlacePredictions(origin.value);
 				}
-			});
+			}, debounceTimerInMiliSec));
 
-			google.maps.event.addDomListener(destination, 'input', function () {
+			google.maps.event.addDomListener(destination, 'input', debounce(function () {
 				results.style.display = 'block';
 				currentSearchFieldId = destination;
 				if(destination.value.length > 4){
 					getPlacePredictions(destination.value);
 				}
-			});
+			}, debounceTimerInMiliSec));
 
-			google.maps.event.addDomListener(destination1, 'input', function () {
+			google.maps.event.addDomListener(destination1, 'input', debounce(function () {
 				results.style.display = 'block';
 				currentSearchFieldId = destination1;
 				if(destination1.value.length > 4){
 					getPlacePredictions(destination1.value);
 				}
-			});
+			}, debounceTimerInMiliSec));
 
-			google.maps.event.addDomListener(destination2, 'input', function () {
+			google.maps.event.addDomListener(destination2, 'input', debounce(function () {
 				results.style.display = 'block';
 				currentSearchFieldId = destination2;
 				if(destination2.value.length > 4){
 					getPlacePredictions(destination2.value);
 				}
-			});
+			}, debounceTimerInMiliSec));
 
-			google.maps.event.addDomListener(destination3, 'input', function () {
+			google.maps.event.addDomListener(destination3, 'input', debounce(function () {
 				results.style.display = 'block';
 				currentSearchFieldId = destination3;
 				if(destination3.value.length > 4){
 					getPlacePredictions(destination3.value);
 				}
-			});
+			}, debounceTimerInMiliSec));
 
 			google.maps.event.addListener(map, 'drag', function () {
 				marker.setPosition(map.getCenter());
@@ -200,11 +181,25 @@
 			
 			sessionToken = new google.maps.places.AutocompleteSessionToken();			
 			autocompleteService = new google.maps.places.AutocompleteService();
-			placesService = new google.maps.places.PlacesService(map);
+			// placesService = new google.maps.places.PlacesService(map);
 		}
 
+		function debounce(func, wait, immediate) {
+			var timeout;
+			return function() {
+				var context = this, args = arguments;
+				var later = function() {
+					timeout = null;
+					if (!immediate) func.apply(context, args);
+				};
+				var callNow = immediate && !timeout;
+				clearTimeout(timeout);
+				timeout = setTimeout(later, wait);
+				if (callNow) func.apply(context, args);
+			};
+		};
+
 		function getPlacePredictions(search) {
-			// console.log(sessionToken);
 			const location = new google.maps.LatLng(currentLat, currentLng );
 			var radius = 15000;
 			var circle = new google.maps.Circle({
@@ -221,25 +216,44 @@
 			}, callback);
 		}
 
-		// Get place details
-		function getPlaceDetails(placeId) {
-			var request = {
-				placeId: placeId
-			};
+		// Getting place details
+		// function getPlaceDetails(placeId) {
+		// 	var request = {
+		// 		placeId: placeId
+		// 	};
 
-			placesService.getDetails(request, function (place, status) {
-				if (status === google.maps.places.PlacesServiceStatus.OK) {
+		// 	placesService.getDetails(request, function (place, status) {
+		// 		if (status === google.maps.places.PlacesServiceStatus.OK) {
+		// 			sessionToken = new google.maps.places.AutocompleteSessionToken();
+		// 			let latlng = place.geometry.location.toJSON();
+		// 			let lat = latlng.lat, lng = latlng.lng;
+		// 			currentSearchFieldId.value = place.formatted_address;
+		// 			currentSearchFieldId.setAttribute("data-lat", lat)
+		// 			currentSearchFieldId.setAttribute("data-lng", lng)
+		// 			currentSearchFieldId.setAttribute("disabled", true);
+		// 			currentSearchFieldId.classList.add('place')
+		// 			// Hide autocomplete results
+		// 			results.style.display = 'none';
+		// 			checkMoreThanTwoPlaces()
+		// 		}
+		// 	});
+		// }
+
+		function getPlaceLatLngUsingGeocoder(address){
+			geocoder.geocode( {address:address}, function(place, status){
+				if (status == google.maps.GeocoderStatus.OK){
 					sessionToken = new google.maps.places.AutocompleteSessionToken();
-					let latlng = place.geometry.location.toJSON();
-					let lat = latlng.lat, lng = latlng.lng;
-					currentSearchFieldId.value = place.formatted_address;
-					currentSearchFieldId.setAttribute("data-lat", lat)
-					currentSearchFieldId.setAttribute("data-lng", lng)
+					currentSearchFieldId.value = address;
+					currentSearchFieldId.setAttribute("data-lat", place[0].geometry.location.lat())
+					currentSearchFieldId.setAttribute("data-lng", place[0].geometry.location.lng())
 					currentSearchFieldId.setAttribute("disabled", true);
 					currentSearchFieldId.classList.add('place')
 					// Hide autocomplete results
 					results.style.display = 'none';
-					checkMoreThanTwoPlaces()					
+					showPreLoadedElements()
+					checkMoreThanTwoPlaces()
+				} else {
+					console.log(status);
 				}
 			});
 		}
@@ -255,20 +269,21 @@
 
 		// Place search callback
 		function callback(predictions, status) {
-			console.log(predictions);
+			// console.log(predictions);
 			hidePreLoadedElements()
 			// Empty results container
 			results.innerHTML = '';
 
 			// Place service status error
-			if (status != google.maps.places.PlacesServiceStatus.OK) {
-				results.innerHTML = `<div class="py-2 border-bottom d-flex gap-2 cursor-pointer">						
-						<div class="">
-							<h5 class="m-0 search-result text-red">Please try again. Status: ${status}</h5>							
-						</div>
-					</div>`
-				return;
-			}
+			// console.log(google.maps.places.PlacesServiceStatus);
+			// if (status != google.maps.places.PlacesServiceStatus.OK) {
+			// 	results.innerHTML = `<div class="py-2 border-bottom d-flex gap-2 cursor-pointer">						
+			// 			<div class="">
+			// 				<h5 class="m-0 search-result text-red">Please try again. Status: ${status}</h5>							
+			// 			</div>
+			// 		</div>`
+			// 	return;
+			// }
 			
 			for (var i = 0, prediction; prediction = predictions[i]; i++) {
 				results.innerHTML += `<div class="d-flex align-items-center border-bottom justify-content-between">
@@ -301,7 +316,8 @@
 			for (var i = 0, item; item = items[i]; i++) {
 				item.onclick = function () {
 					if (this.dataset.placeid) {
-						getPlaceDetails(this.dataset.placeid);
+						// getPlaceDetails(this.dataset.placeid);
+						getPlaceLatLngUsingGeocoder(this.dataset.name)
 					}
 				};
 			}
@@ -1145,9 +1161,12 @@
 				placeId: placeId
 			};
 
-			placesService.getDetails(request, function (place, status) {
-				if (status === google.maps.places.PlacesServiceStatus.OK) {
-					let latlng = place.geometry.location.toJSON();
+			// placesService.getDetails(request, function (place, status) {
+			geocoder.geocode( {address:address}, function(results, status){
+				if (status == google.maps.GeocoderStatus.OK){
+				// if (status === google.maps.places.PlacesServiceStatus.OK) {
+					// let latlng = place.geometry.location.toJSON();
+					
 					
 					$.ajax({
 						url: `https://api.jaduride.com/customers/users/${userId}/places/saved`,
@@ -1160,8 +1179,8 @@
 						data:{
 							placeId : placeId,
 							description : text,
-							lat : latlng.lat,
-							lng : latlng.lng,
+							lat : results[0].geometry.location.lat(),
+							lng : results[0].geometry.location.lng(),
 							extraData : ""
 						},
 						success: function (result) {
