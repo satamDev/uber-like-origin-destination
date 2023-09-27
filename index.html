@@ -89,14 +89,16 @@
 				radius: radius
 			});
 			for (i = 0;i < theFields.length; i++){
-				setupPlaceChangedListener(new google.maps.places.Autocomplete((document.getElementById(theFields[i])),
+				autocomplete = new google.maps.places.Autocomplete((document.getElementById(theFields[i])),
 				{ 
 					bounds: circle.getBounds(),
 					componentRestrictions: { country: "ind" },
-					fields:['geometry', "name"],
-					types: ['establishment', 'geocode']
-				}))				
-			}				
+					fields:['geometry.location', "name"],
+					strictBounds:true
+				})
+				console.log(autocomplete);
+				setupPlaceChangedListener(autocomplete)
+			}
 
 			google.maps.event.addListener(map, 'drag', function () {
 				marker.setPosition(map.getCenter());
@@ -156,8 +158,12 @@
 
 		const setupPlaceChangedListener = (autocomplete) => {
 			autocomplete.addListener('place_changed', () => {
+				console.log(autocomplete);
 				var place = autocomplete.getPlace();
 				console.log(place);	
+
+				console.log(autocomplete.getBounds());
+
 				let latlng = place.geometry.location.toJSON();
 				let lat = latlng.lat, lng = latlng.lng;
 				document.getElementById(currentSearchFieldIdOnFocus).value = place.name;
