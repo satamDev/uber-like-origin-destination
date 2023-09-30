@@ -284,8 +284,7 @@
 			// 		</div>`
 			// 	return;
 			// }
-			
-			for (var i = 0, prediction; prediction = predictions[i]; i++) {
+			for (var i = 0, prediction; prediction = predictions[i]; i++) {				
 				results.innerHTML += `<div class="d-flex align-items-center border-bottom justify-content-between">
 					<div class="py-3 d-flex gap-2 cursor-pointer">
 						<span>
@@ -299,7 +298,7 @@
 							</svg>
 						</span>
 						<div class="">
-							<h5 class="m-0 search-result" data-placeid="${prediction.place_id}" data-name="${prediction.terms[0].value}">${prediction.description}</h5>							
+							<h5 class="m-0 search-result" data-placeid="${prediction.place_id}" data-name="${prediction.description}">${prediction.description}</h5>							
 						</div>
 					</div>
 					<div class="favourites ms-auto">
